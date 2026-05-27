@@ -1,6 +1,6 @@
 {
   "name": "neo-agents-ai",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "display_name": "Neo Agents AI",
   "description": "An AI crew embedded in your project — BA, SA, Designer, Engineer, and PM agents that interview you before producing output. Works on any project, any stack, any size.",
   "author": "jameskwi",
