@@ -2,7 +2,7 @@
   "id": "jameskwi/neo-agents-ai",
   "name": "Neo Agents AI",
   "tagline": "Your AI crew — BA, SA, Designer, Engineer, PM — inside any project.",
-  "description": "Drop Neo Agents AI into any project and get an interactive AI crew that fills specialist roles. Agents interview you before producing output — no assumptions, no generic templates. Works on any stack: Next.js, React, Python, Flutter, and more.",
+  "description": "Drop Neo Agents AI into any project and get an interactive AI crew that fills specialist roles. Agents interview you before producing output — no assumptions, no generic templates. Includes a live dashboard with task board, doc viewer, and timeline. Works on any stack: Next.js, React, Python, Flutter, and more.",
   "category": "productivity",
   "tags": ["agents", "ba", "architecture", "requirements", "dashboard", "planning"],
   "author": {
@@ -14,9 +14,10 @@
   "quick_start": [
     "/plugin install neo-agents-ai",
     "/neo:setup",
-    "/neo:ba \"your feature idea here\""
+    "/neo:ba \"your feature idea here\"",
+    "/neo:dashboard"
   ],
   "screenshots": [],
-  "version": "1.1.0",
+  "version": "1.3.0",
   "license": "MIT"
 }
