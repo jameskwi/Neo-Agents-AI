@@ -1,0 +1,61 @@
+# /neo:dashboard — Launch Dashboard
+
+## What this does
+Starts the Neo Agents dashboard web server and opens it in the browser.
+
+---
+
+## Execution Steps
+
+### 1. Pre-flight
+- Check `.ai-agents/config.json` exists → if not: "Run `/neo:setup` first."
+- Read `dashboard_port` from config (default: 7842)
+
+### 2. Check if dashboard is already running
+- Try connecting to `localhost:{dashboard_port}`
+- If already running → open browser directly, skip server start
+
+### 3. Check Node.js available
+Run: `node --version`
+If not found → show:
+> "Node.js is required for the dashboard.
+> Install it: https://nodejs.org
+> Then re-run /neo:dashboard"
+→ Stop.
+
+### 4. Install dashboard dependencies (first run only)
+```bash
+cd {plugin_root}/dashboard
+npm install --silent
+```
+
+### 5. Build dashboard
+```bash
+npm run build --silent
+```
+
+### 6. Start dashboard server
+```bash
+node server.js --port={dashboard_port} --root={project_root}
+```
+
+Server binds to `127.0.0.1` only — never `0.0.0.0`.
+
+### 7. Open browser
+Open: `http://localhost:{dashboard_port}`
+
+Show:
+```
+✅ Dashboard running at http://localhost:{dashboard_port}
+Press Ctrl+C to stop.
+```
+
+---
+
+## Port Conflict Handling
+If port is taken → auto-increment by 1 until a free port is found (max: +10).
+Show the actual port used in the success message.
+
+---
+
+*dashboard skill v1.0 — Neo Agents AI*

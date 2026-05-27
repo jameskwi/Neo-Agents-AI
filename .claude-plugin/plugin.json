@@ -1,0 +1,55 @@
+{
+  "name": "neo-agents-ai",
+  "version": "1.0.0",
+  "display_name": "Neo Agents AI",
+  "description": "An AI crew embedded in your project — BA, SA, Designer, Engineer, and PM agents that interview you before producing output. Works on any project, any stack, any size.",
+  "author": "jameskwi",
+  "repository": "https://github.com/jameskwi/Neo-Agents-AI",
+  "license": "MIT",
+  "min_claude_code_version": "1.0.0",
+  "commands": [
+    {
+      "name": "neo:setup",
+      "description": "Initialize Neo Agents AI in your project — auto-detects stack, creates config and folder structure",
+      "skill": "skills/setup.md"
+    },
+    {
+      "name": "neo:ba",
+      "description": "Run the Business Analyst agent — interviews you before writing a full BRD",
+      "skill": "skills/ba.md"
+    },
+    {
+      "name": "neo:sa",
+      "description": "Run the Solution Architect agent — reads BRD and produces SSD with technical blueprint",
+      "skill": "skills/sa.md"
+    },
+    {
+      "name": "neo:ds",
+      "description": "Run the Designer agent — produces a Claude Design prompt from BRD + SSD",
+      "skill": "skills/ds.md"
+    },
+    {
+      "name": "neo:dev",
+      "description": "Run the Engineer agent — produces the final Implementation File for Claude Code",
+      "skill": "skills/dev.md"
+    },
+    {
+      "name": "neo:dashboard",
+      "description": "Launch the Neo Agents dashboard in your browser",
+      "skill": "skills/dashboard.md"
+    }
+  ],
+  "agents": [
+    "agents/business-analyst.md",
+    "agents/solution-architect.md",
+    "agents/designer.md",
+    "agents/engineer.md",
+    "agents/planner.md"
+  ],
+  "global_rules": "CLAUDE.md",
+  "runtime": {
+    "requires_python3": true,
+    "dashboard_default_port": 7842,
+    "file_encoding": "UTF-8"
+  }
+}
