@@ -36,7 +36,7 @@ The BA doesn't guess. It asks. Then it writes.
 | Agent | Role | Status |
 |---|---|---|
 | **BA** | Interviews you → writes a full Business Requirements Document | ✅ v1 |
-| **SA** | Reads BRD → writes technical blueprint (SSD) + flags if design is needed | v2 |
+| **SA** | Reads BRD → writes technical blueprint (SSD) + flags if design is needed | ✅v2 |
 | **DS** | Reads BRD + SSD → writes a ready-to-run Claude Design prompt | v2 |
 | **DEV** | Reads full context → writes the Implementation File for Claude Code | v2 |
 | **PM** | Passive tracker — manages task board and project history | v2 |
