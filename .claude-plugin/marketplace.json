@@ -1,20 +1,15 @@
 {
-  "name": "jameskwi-neo-agents-ai",
+  "name": "neo-agents-ai",
+  "metadata": {
+    "description": "An AI crew embedded in your project — BA, SA, Designer, Engineer, and PM agents that interview you before producing output."
+  },
   "owner": {
     "name": "jameskwi"
-  },
-  "metadata": {
-    "description": "Neo Agents AI — your AI crew inside any project."
   },
   "plugins": [
     {
       "name": "neo-agents-ai",
-      "source": {
-        "source": "url",
-        "url": "https://github.com/jameskwi/Neo-Agents-AI.git",
-        "ref": "main"
-      },
-      "description": "An AI crew embedded in your project — BA, SA, Designer, Engineer, and PM agents that interview you before producing output. Works on any project, any stack, any size."
+      "source": "./neo-agents-ai-plugin"
     }
   ]
 }
