@@ -9,10 +9,7 @@
   "plugins": [
     {
       "name": "neo-agents-ai",
-      "source": {
-        "source": "github",
-        "repo": "jameskwi/Neo-Agents-AI"
-      }
+      "source": "./neo-agents-ai-plugin"
     }
   ]
 }
