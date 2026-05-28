@@ -62,13 +62,13 @@ Opens at `http://localhost:7842` — live task board, all agent docs, markdown v
 | Agent | Command | What it does |
 |---|---|---|
 | **BA** — Business Analyst | `/neo:ba "idea"` | Interviews you → writes full BRD with user stories, process flows, edge cases |
+| **SA** — Solution Architect | `/neo:sa` | Reads BRD → writes SSD: API endpoints, data model, technical risks |
 | **Dashboard** | `/neo:dashboard` | Live board: task status, all agent docs, move tasks between columns |
 
 ### v2 — Coming Next
 
 | Agent | Command | What it does |
 |---|---|---|
-| **SA** — Solution Architect | `/neo:sa` | Reads BRD → writes SSD: API endpoints, data model, technical risks |
 | **DS** — Designer | `/neo:ds` | Reads BRD + SSD → writes a ready-to-run Claude Design prompt |
 | **DEV** — Engineer | `/neo:dev` | Reads full context → writes Implementation File for Claude Code |
 | **PM** — Project Manager | passive | Auto-tracks task board, sprint state, pipeline progress |
@@ -212,7 +212,7 @@ Yes. All files are plain UTF-8 markdown and JSON. Recommended to commit.
 Falls back to `Generic` type. All agents work — questions just aren't stack-specific.
 
 **Does the dashboard need internet?**
-No. Reads local files only. Binds to `127.0.0.1`.
+The server and data are fully local — no data leaves your machine. The dashboard UI loads React and fonts from CDN (unpkg.com, fonts.googleapis.com), so an internet connection is needed for the first load. CDN assets are browser-cached after that.
 
 **Can I re-run setup on an existing project?**
 Yes. You'll be prompted: `Config exists. Update? [y/n]` — existing config is backed up before any change.
@@ -220,6 +220,15 @@ Yes. You'll be prompted: `Config exists. Update? [y/n]` — existing config is b
 ---
 
 ## Changelog
+
+### v1.4.0 — May 2026
+- Access token validation on all `/api/*` dashboard routes (token read from `config.json`, passed in URL by `/neo:dashboard`)
+- Directory naming corrected: `SE` → `DEV`, `PL` → `PM` across all agents, skills, server, and dashboard
+- Root `.claude-plugin/plugin.json` now complete with all commands, agents, runtime, and dashboard blocks
+- `/neo:pm` skill stub added
+- Dynamic timeline: milestone status derived from actual doc presence rather than hardcoded dates
+- Dashboard CORS restricted from `*` to `localhost` only
+- `.gitignore` extended with `node_modules/`, logs, OS artifacts
 
 ### v1.3.0 — May 2026
 - Dashboard v1: task board, doc viewer, timeline, task detail modal
@@ -251,4 +260,4 @@ MIT — [jameskwi](https://github.com/jameskwi)
 
 ---
 
-*Neo Agents AI — v1.3.0 | [GitHub](https://github.com/jameskwi/Neo-Agents-AI)*
+*Neo Agents AI — v1.4.0 | [GitHub](https://github.com/jameskwi/Neo-Agents-AI)*
