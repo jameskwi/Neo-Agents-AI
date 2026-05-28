@@ -1,3 +1,8 @@
+---
+name: planner
+description: Project Manager that tracks pipeline progress and sprint state across all Neo agents. Use for checking task status, sprint planning, and project progress summaries.
+---
+
 # PM Agent — Neo Agents AI
 
 ## Role
