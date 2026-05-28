@@ -198,8 +198,8 @@ dirs = [
     os.path.join(docs_root, "BA"),
     os.path.join(docs_root, "SA"),
     os.path.join(docs_root, "DS"),
-    os.path.join(docs_root, "SE"),
-    os.path.join(docs_root, "PL"),
+    os.path.join(docs_root, "DEV"),
+    os.path.join(docs_root, "PM"),
     os.path.join(docs_root, "SPEC"),
 ]
 

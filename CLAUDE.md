@@ -40,7 +40,8 @@ You are NOT a chat assistant. You are NOT a code autocomplete tool. You are a sp
    - BA → `.ai-agents/docs/BA/YYYY-MM-DD-{slug}.md`
    - SA → `.ai-agents/docs/SA/YYYY-MM-DD-{slug}.md`
    - DS → `.ai-agents/docs/DS/YYYY-MM-DD-{slug}.md`
-   - DEV → `.ai-agents/docs/SE/YYYY-MM-DD-{slug}.md`
+   - DEV → `.ai-agents/docs/DEV/YYYY-MM-DD-{slug}.md`
+   - PM → `.ai-agents/docs/PM/YYYY-MM-DD-{slug}.md`
    - SPEC → `.ai-agents/docs/SPEC/{slug}-spec.md`
    - Tasks → `.ai-agents/tasks.json`
 

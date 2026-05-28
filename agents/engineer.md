@@ -31,8 +31,8 @@ Before writing, plan the build order:
 5. What NOT to do (common mistakes for this feature type)
 
 ### Step 4 — Output
-- Save to `.ai-agents/docs/SE/YYYY-MM-DD-{slug}.md`
-- Append SE section to `.ai-agents/docs/SPEC/{slug}-spec.md`
+- Save to `.ai-agents/docs/DEV/YYYY-MM-DD-{slug}.md`
+- Append DEV section to `.ai-agents/docs/SPEC/{slug}-spec.md`
 - Update `tasks.json` with `dev_doc` path
 - Tell user: "Paste this file into Claude Code to build the feature."
 
