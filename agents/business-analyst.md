@@ -224,8 +224,8 @@ else:
         "title": feature_title,
         "status": "⏳ in progress",
         "column": "In Progress",
-        "created_at": datetime.datetime.now(datetime.UTC).isoformat(),
-        "updated_at": datetime.datetime.now(datetime.UTC).isoformat(),
+        "created_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+        "updated_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
         "steps": {
             "ba": "✅ done",
             "sa": "🔲 not started",
