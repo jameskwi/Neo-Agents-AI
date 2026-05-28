@@ -272,13 +272,25 @@
 <script type="text/babel">
 const { useState, useEffect, useCallback } = React;
 
+/* ── Auth token ── */
+// Token is passed as ?token=... when the dashboard skill opens the browser.
+// Persisted in sessionStorage so refreshes don't break the session.
+const _urlToken = new URLSearchParams(window.location.search).get("token") || "";
+if (_urlToken) sessionStorage.setItem("neo_token", _urlToken);
+const NEO_TOKEN = _urlToken || sessionStorage.getItem("neo_token") || "";
+function withToken(path) {
+  if (!NEO_TOKEN) return path;
+  const sep = path.includes("?") ? "&" : "?";
+  return path + sep + "token=" + encodeURIComponent(NEO_TOKEN);
+}
+
 /* ── Agent definitions (Neo Agents AI) ── */
 const AGENTS = {
   BA: { name: "Business Analyst",    color: "#7C95FF", role: "Requirements & BRDs",       docDir: "BA"   },
   SA: { name: "Solution Architect",  color: "#C57FF5", role: "System & data design",      docDir: "SA"   },
   DS: { name: "Designer",            color: "#FF6F91", role: "Wireframes & UI prompts",   docDir: "DS"   },
-  DEV:{ name: "Engineer",            color: "#FFB547", role: "Implementation specs",       docDir: "SE"   },
-  PM: { name: "PM",                  color: "#76ABAE", role: "Task board & tracking",      docDir: "PL"   },
+  DEV:{ name: "Engineer",            color: "#FFB547", role: "Implementation specs",       docDir: "DEV"  },
+  PM: { name: "PM",                  color: "#76ABAE", role: "Task board & tracking",      docDir: "PM"   },
 };
 
 /* ── Column config ── */
@@ -289,21 +301,6 @@ const COLS = {
   Done:        { color: "#4caf78", statusKey: "✅ done"          },
 };
 
-/* ── Milestone data (Neo v1 milestones) ── */
-const MILESTONES = [
-  { phase:1, date:"2026-05-27", title:"M1 — Plugin scaffold",       agent:"PM",  status:"done"     },
-  { phase:1, date:"2026-05-27", title:"M2 — /neo:setup command",    agent:"BA",  status:"done"     },
-  { phase:1, date:"2026-05-27", title:"M3 — BA agent (interview)",  agent:"BA",  status:"done"     },
-  { phase:2, date:"2026-05-28", title:"M4 — Dashboard v1",          agent:"PM",  status:"active"   },
-  { phase:2, date:"2026-05-30", title:"M5 — Integration test",      agent:"DEV", status:"upcoming" },
-  { phase:2, date:"2026-06-01", title:"M6 — Public release",        agent:"PM",  status:"upcoming" },
-];
-const PHASES = [
-  { num:"01", label:"Build v1",  state:"active",   dates:"May 27 → Jun 01", pct:60 },
-  { num:"02", label:"Test",      state:"upcoming", dates:"Jun 01 → Jun 07", pct:0  },
-  { num:"03", label:"v2 Agents", state:"upcoming", dates:"Jun 10 →",        pct:0  },
-  { num:"04", label:"Scale",     state:"upcoming", dates:"Jul →",           pct:0  },
-];
 
 /* ── Icons ── */
 const I = {
@@ -369,7 +366,7 @@ function renderMarkdown(md) {
 /* ── Data fetching ── */
 async function fetchTasks() {
   try {
-    const r = await fetch("/api/tasks");
+    const r = await fetch(withToken("/api/tasks"));
     if (!r.ok) return [];
     const d = await r.json();
     return d.tasks || [];
@@ -378,7 +375,7 @@ async function fetchTasks() {
 
 async function fetchConfig() {
   try {
-    const r = await fetch("/api/config");
+    const r = await fetch(withToken("/api/config"));
     if (!r.ok) return null;
     return await r.json();
   } catch { return null; }
@@ -386,7 +383,7 @@ async function fetchConfig() {
 
 async function fetchDocs() {
   try {
-    const r = await fetch("/api/docs");
+    const r = await fetch(withToken("/api/docs"));
     if (!r.ok) return {};
     return await r.json();
   } catch { return {}; }
@@ -394,7 +391,7 @@ async function fetchDocs() {
 
 async function fetchDocContent(path) {
   try {
-    const r = await fetch("/api/doc?path=" + encodeURIComponent(path));
+    const r = await fetch(withToken("/api/doc?path=" + encodeURIComponent(path)));
     if (!r.ok) return null;
     return await r.text();
   } catch { return null; }
@@ -479,7 +476,7 @@ function App() {
               {tab==="overview" && <Overview tasks={tasks} docs={docs} onSelect={setSelected}/>}
               {tab==="board"    && <Board tasks={tasks} setTasks={setTasks} onSelect={setSelected} showToast={showToast}/>}
               {tab==="docs"     && <Docs docs={docs}/>}
-              {tab==="timeline" && <Timeline/>}
+              {tab==="timeline" && <Timeline tasks={tasks} docs={docs}/>}
             </>
         }
       </div>
@@ -608,7 +605,7 @@ function Overview({ tasks, docs, onSelect }) {
 function Board({ tasks, setTasks, onSelect, showToast }) {
   const moveTask = async (taskId, newCol) => {
     try {
-      await fetch("/api/task/move", {
+      await fetch(withToken("/api/task/move"), {
         method:"POST",
         headers:{"Content-Type":"application/json"},
         body: JSON.stringify({ id: taskId, column: newCol })
@@ -758,7 +755,7 @@ function TaskModal({ task, onClose }) {
 /* ── Docs ── */
 function Docs({ docs }) {
   const [active, setActive] = useState(null);
-  const [open, setOpen] = useState({BA:true,SA:false,DS:false,SE:false,PL:false});
+  const [open, setOpen] = useState({BA:true,SA:false,DS:false,DEV:false,PM:false});
   const [query, setQuery] = useState("");
   const [content, setContent] = useState(null);
   const [loadingDoc, setLoadingDoc] = useState(false);
@@ -829,7 +826,7 @@ function Docs({ docs }) {
             </span>
             {active && <>
               <button className="btn-secondary" onClick={()=>{navigator.clipboard?.writeText(window.location.href+"#"+active)}}>Copy link</button>
-              <a className="btn-dl" href={"/api/doc?path=.ai-agents/docs/"+active} download={fileName}><I.dl/> Download</a>
+              <a className="btn-dl" href={withToken("/api/doc?path=.ai-agents/docs/"+active)} download={fileName}><I.dl/> Download</a>
             </>}
           </div>
           <div className="doc-body">
@@ -849,16 +846,57 @@ function Docs({ docs }) {
 }
 
 /* ── Timeline ── */
-function Timeline() {
-  const grouped = [1,2,3,4].map(n => ({
-    phase: PHASES[n-1],
-    items: MILESTONES.filter(m => m.phase === n),
+function Timeline({ tasks, docs }) {
+  // Derive milestone status from actual artifact presence in docs + tasks
+  const hasBaDocs  = (docs.BA  || []).length > 0;
+  const hasSaDocs  = (docs.SA  || []).length > 0;
+  const hasDsDocs  = (docs.DS  || []).length > 0;
+  const hasDevDocs = (docs.DEV || []).length > 0;
+  const hasPmDocs  = (docs.PM  || []).length > 0;
+  const doneTasks  = tasks.filter(t => t.column === "Done").length;
+
+  function ms(status) { return status; } // identity helper for clarity
+
+  const milestones = [
+    { phase:1, date:"Week 3",  title:"M1 — Plugin scaffold + /neo:setup",  agent:"PM",  status: ms("done")                                                              },
+    { phase:1, date:"Week 5",  title:"M2 — BA agent live (interview+BRD)",  agent:"BA",  status: hasBaDocs  ? ms("done") : ms("active")                                  },
+    { phase:2, date:"Week 7",  title:"M3 — SA agent live (BRD→SSD)",        agent:"SA",  status: hasSaDocs  ? ms("done") : hasBaDocs  ? ms("active") : ms("upcoming")    },
+    { phase:2, date:"Week 9",  title:"M4 — Designer agent live (SSD→UI)",   agent:"DS",  status: hasDsDocs  ? ms("done") : hasSaDocs  ? ms("active") : ms("upcoming")    },
+    { phase:3, date:"Week 11", title:"M5 — Engineer agent live (→impl)",    agent:"DEV", status: hasDevDocs ? ms("done") : hasDsDocs  ? ms("active") : ms("upcoming")    },
+    { phase:3, date:"Week 11", title:"M6 — PM tracking active",             agent:"PM",  status: hasPmDocs  ? ms("done") : hasDevDocs ? ms("active") : ms("upcoming")    },
+    { phase:4, date:"Week 12", title:"M7 — Full E2E pipeline validated",    agent:"PM",  status: doneTasks >= 3 ? ms("done") : hasPmDocs ? ms("active") : ms("upcoming") },
+    { phase:4, date:"Week 13", title:"M8 — Alpha public release",           agent:"PM",  status: ms("upcoming")                                                           },
+  ];
+
+  // Derive phase summary from milestone statuses
+  function phaseState(n) {
+    const items = milestones.filter(m => m.phase === n);
+    if (items.every(m => m.status === "done")) return "done";
+    if (items.some(m => m.status === "done" || m.status === "active")) return "active";
+    return "upcoming";
+  }
+  function phasePct(n) {
+    const items = milestones.filter(m => m.phase === n);
+    if (!items.length) return 0;
+    return Math.round(items.filter(m => m.status === "done").length / items.length * 100);
+  }
+
+  const phases = [
+    { num:"01", label:"Foundation",    dates:"M1 – M2", state: phaseState(1), pct: phasePct(1) },
+    { num:"02", label:"Architect + DS",dates:"M3 – M4", state: phaseState(2), pct: phasePct(2) },
+    { num:"03", label:"Engineer + PM", dates:"M5 – M6", state: phaseState(3), pct: phasePct(3) },
+    { num:"04", label:"E2E + Alpha",   dates:"M7 – M8", state: phaseState(4), pct: phasePct(4) },
+  ];
+
+  const grouped = phases.map(p => ({
+    phase: p,
+    items: milestones.filter(m => m.phase === parseInt(p.num, 10)),
   }));
 
   return (
     <div className="page">
       <div className="phases">
-        {PHASES.map(p => (
+        {phases.map(p => (
           <div key={p.num} className={"phase "+p.state}>
             <div className="phase-head">
               <span className="phase-num">{p.num}</span>
@@ -880,25 +918,22 @@ function Timeline() {
             <span className="name">{phase.label}</span>
             <span className="info">
               {items.filter(i=>i.status==="done").length} of {items.length} milestones
-              {phase.state==="done"   && " · complete"}
-              {phase.state==="active" && " · in progress"}
+              {phase.state==="done"     && " · complete"}
+              {phase.state==="active"   && " · in progress"}
               {phase.state==="upcoming" && " · upcoming"}
             </span>
           </div>
-          {items.length === 0
-            ? <div className="empty"><div className="t">No milestones yet</div></div>
-            : items.map(m => (
-                <div key={m.date+m.title} className="milestone">
-                  <span className="ms-date">{m.date}</span>
-                  <span className={"ms-connector "+m.status}><span className="d"/></span>
-                  <span className="ms-title">{m.title}</span>
-                  <span className="badge-sm" style={{background:AGENTS[m.agent]?.color||"#76ABAE"}}>{m.agent}</span>
-                  <span className={"status-pill status-"+(m.status==="active"?"progress":m.status==="upcoming"?"backlog":"done")}>
-                    {m.status==="active"?"In Progress":m.status==="upcoming"?"Upcoming":"Done"}
-                  </span>
-                </div>
-              ))
-          }
+          {items.map(m => (
+            <div key={m.date+m.title} className="milestone">
+              <span className="ms-date">{m.date}</span>
+              <span className={"ms-connector "+m.status}><span className="d"/></span>
+              <span className="ms-title">{m.title}</span>
+              <span className="badge-sm" style={{background:AGENTS[m.agent]?.color||"#76ABAE"}}>{m.agent}</span>
+              <span className={"status-pill status-"+(m.status==="active"?"progress":m.status==="upcoming"?"backlog":"done")}>
+                {m.status==="active"?"In Progress":m.status==="upcoming"?"Upcoming":"Done"}
+              </span>
+            </div>
+          ))}
         </div>
       ))}
     </div>
