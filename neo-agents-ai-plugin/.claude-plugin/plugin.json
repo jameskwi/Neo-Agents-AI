@@ -16,42 +16,47 @@
     {
       "name": "neo:setup",
       "description": "Initialize Neo Agents AI in your project — auto-detects stack, creates config and folder structure",
-      "skill": "skills/setup.md"
+      "skill": "../skills/setup.md"
     },
     {
       "name": "neo:ba",
       "description": "Run the Business Analyst agent — interviews you before writing a full BRD",
-      "skill": "skills/ba.md"
+      "skill": "../skills/ba.md"
     },
     {
       "name": "neo:sa",
       "description": "Run the Solution Architect agent — reads BRD and produces SSD with technical blueprint",
-      "skill": "skills/sa.md"
+      "skill": "../skills/sa.md"
     },
     {
       "name": "neo:ds",
       "description": "Run the Designer agent — produces a Claude Design prompt from BRD + SSD",
-      "skill": "skills/ds.md"
+      "skill": "../skills/ds.md"
     },
     {
       "name": "neo:dev",
       "description": "Run the Engineer agent — produces the final Implementation File for Claude Code",
-      "skill": "skills/dev.md"
+      "skill": "../skills/dev.md"
+    },
+    {
+      "name": "neo:pm",
+      "description": "Run the PM agent — tracks pipeline progress and sprint state",
+      "skill": "../skills/pm.md"
     },
     {
       "name": "neo:dashboard",
       "description": "Launch the Neo Agents dashboard in your browser",
-      "skill": "skills/dashboard.md"
+      "skill": "../skills/dashboard.md"
     }
   ],
   "agents": [
-    "agents/business-analyst.md",
-    "agents/solution-architect.md",
-    "agents/designer.md",
-    "agents/engineer.md",
-    "agents/planner.md"
+    "../agents/business-analyst.md",
+    "../agents/solution-architect.md",
+    "../agents/designer.md",
+    "../agents/engineer.md",
+    "../agents/planner.md"
   ],
-  "global_rules": "CLAUDE.md",
+  "global_rules": "../CLAUDE.md",
   "runtime": {
     "requires_python3": true,
     "requires_nodejs": true,
@@ -59,8 +64,8 @@
     "file_encoding": "UTF-8"
   },
   "dashboard": {
-    "entry": "dashboard/index.html",
-    "server": "dashboard/server.js",
+    "entry": "../dashboard/index.html",
+    "server": "../dashboard/server.js",
     "port": 7842,
     "bind": "127.0.0.1"
   }
