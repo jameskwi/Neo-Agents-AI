@@ -225,7 +225,44 @@ If output is not `__OK__` → show the error and stop.
 
 ---
 
-### 5. Show setup summary
+### 5. Handle .gitignore
+
+Run this Python3 script:
+
+```python
+import os
+
+cwd = os.getcwd()
+gitignore_path = os.path.join(cwd, ".gitignore")
+entry = ".ai-agents/"
+
+if os.path.exists(gitignore_path):
+    with open(gitignore_path, "r", encoding="utf-8") as f:
+        content = f.read()
+    lines = content.splitlines()
+    already_ignored = any(line.strip().rstrip("/") == entry.rstrip("/") or line.strip() == entry for line in lines)
+    if not already_ignored:
+        with open(gitignore_path, "a", encoding="utf-8") as f:
+            if content and not content.endswith("\n"):
+                f.write("\n")
+            f.write(f"\n# Neo Agents AI — local agent workspace\n{entry}\n")
+        print("__ADDED__")
+    else:
+        print("__ALREADY__")
+else:
+    print("__MISSING__")
+```
+
+- `__ADDED__` → silently continue (entry was appended)
+- `__ALREADY__` → silently continue (already present)
+- `__MISSING__` → show this warning once and continue:
+  > ⚠️  No `.gitignore` found.
+  > The `.ai-agents/` folder contains local agent state and access tokens — it should not be committed.
+  > Add `.ai-agents/` to your `.gitignore` when you initialise a git repository for this project.
+
+---
+
+### 6. Show setup summary
 
 ```
 ✅ Neo Agents AI is ready.
@@ -251,4 +288,4 @@ Next step: /neo:ba "describe your first feature"
 
 ---
 
-*setup skill v1.1 — Neo Agents AI*
+*setup skill v1.2 — Neo Agents AI*

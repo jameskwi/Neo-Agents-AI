@@ -166,6 +166,7 @@ Before saving, verify every gate. If any fails — fix it:
 - [ ] Data model section is present (or explicitly states no changes)
 - [ ] Technical risks: at least 1 entry with concrete mitigation
 - [ ] `design_required` is explicitly YES or NO with a specific reason
+- [ ] Extract `DESIGN_REQUIRED_BOOL` from SSD section 6: `True` if YES, `False` if NO — used in Script 3
 - [ ] Task ID matches the task from context (not invented)
 - [ ] BRD path reference is correct
 - [ ] No placeholder text remaining in any section
@@ -237,6 +238,7 @@ import json, os, datetime
 
 task_id = "{task_id}"
 slug = "{slug}"
+design_required = {DESIGN_REQUIRED_BOOL}  # True or False — injected from SSD section 6 decision
 date_str = datetime.date.today().strftime("%Y-%m-%d")
 tasks_path = ".ai-agents/tasks.json"
 sa_path = f".ai-agents/docs/SA/{date_str}-{slug}.md"
@@ -255,12 +257,13 @@ if not task:
 
 task["steps"]["sa"] = "✅ done"
 task["docs"]["sa_doc"] = sa_path
+task["docs"]["design_required"] = design_required
 task["updated_at"] = datetime.datetime.now(datetime.timezone.utc).isoformat()
 
 with open(tasks_path, "w", encoding="utf-8") as f:
     json.dump(data, f, indent=2, ensure_ascii=False)
 
-print(f"Task {task_id} updated: sa = done, sa_doc = {sa_path}")
+print(f"Task {task_id} updated: sa = done, sa_doc = {sa_path}, design_required = {design_required}")
 ```
 
 ---
@@ -306,4 +309,4 @@ Next: /neo:dev — generate the Implementation File for Claude Code.
 
 ---
 
-*SA Agent v1.0 — Neo Agents AI*
+*SA Agent v1.1 — Neo Agents AI*

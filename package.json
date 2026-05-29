@@ -1,0 +1,9 @@
+{
+  "name": "neo-agents-ai",
+  "version": "1.4.0",
+  "private": true,
+  "scripts": {
+    "build": "pnpm --filter @neo-agents/dashboard build",
+    "dev": "pnpm --filter @neo-agents/dashboard dev"
+  }
+}

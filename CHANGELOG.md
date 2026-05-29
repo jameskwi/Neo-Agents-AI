@@ -5,6 +5,23 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ---
 
+## [v1.5.0] — 2026-05-28
+
+### Added
+- **M4: DS agent live** — `/neo:ds` runs a 2–4 question design interview then produces a fully structured Claude Design Prompt: feature context, components with states/interactions/data binding, responsive requirements, design constraints, reference patterns
+- `skills/ds.md` — pre-flight (config, task selection gated on `design_required: True`, BRD+SSD read) + handoff to DS agent
+- `agents/designer.md` — full implementation replacing stub: project scan for CSS framework / component library / design tokens, interview, Claude Design Prompt format, quality gates, Python save scripts, SPEC append, tasks.json update
+
+---
+
+## [v1.4.1] — 2026-05-28
+
+### Fixed
+- SA agent Script 3: `design_required` (True/False) now written to `task.docs.design_required` in tasks.json — DS skill (M4) uses this flag as its entry gate
+- SA agent quality gates: added explicit step to extract `DESIGN_REQUIRED_BOOL` before running Script 3
+
+---
+
 ## [v1.4.0] — 2026-05-28
 
 Full release notes: [RELEASES/v1.4.0.md](RELEASES/v1.4.0.md)
