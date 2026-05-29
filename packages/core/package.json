@@ -1,0 +1,14 @@
+{
+  "name": "@neo-agents/core",
+  "version": "1.0.0",
+  "description": "Neo Agents AI — file I/O engine (CLI + library)",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.0",
+    "@types/node": "^20.0.0"
+  }
+}
