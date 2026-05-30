@@ -160,7 +160,7 @@ neo-agents-ai/
 │   └── dashboard/
 │       ├── src/             ← React dashboard UI (Vite + TypeScript)
 │       ├── index.html
-│       └── server.js        ← local Node.js server
+│       └── server.cjs       ← local Node.js server
 ├── agents/
 │   ├── business-analyst.md
 │   ├── solution-architect.md

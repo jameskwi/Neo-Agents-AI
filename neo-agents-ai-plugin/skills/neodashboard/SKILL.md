@@ -2,6 +2,27 @@
 
 ## What this does
 Starts the Neo Agents dashboard web server and opens it in the browser.
+Serves the Vite-built React UI from `packages/dashboard/dist/` via `server.cjs`.
+
+---
+
+## Resolve Plugin Path
+
+Before any other step, resolve the plugin install location:
+
+```bash
+PLUGIN_DIR="${CLAUDE_PLUGIN_DIR:-}"
+if [ -z "$PLUGIN_DIR" ]; then
+  PLUGIN_DIR=$(find "$HOME/.claude" -maxdepth 8 -name "server.cjs" \
+    -path "*/neo-agents-ai*/packages/dashboard/server.cjs" 2>/dev/null \
+    | head -1 | sed 's|/packages/dashboard/server.cjs||')
+fi
+DASHBOARD_DIR="${PLUGIN_DIR}/packages/dashboard"
+SERVER="${DASHBOARD_DIR}/server.cjs"
+```
+
+If `PLUGIN_DIR` is still empty → stop:
+> "Cannot locate the Neo Agents AI plugin install path. Reinstall the plugin."
 
 ---
 
@@ -17,7 +38,9 @@ Starts the Neo Agents dashboard web server and opens it in the browser.
 - If already running → open browser directly, skip server start
 
 ### 3. Check Node.js available
-Run: `node --version`
+```bash
+node --version
+```
 If not found → show:
 > "Node.js is required for the dashboard.
 > Install it: https://nodejs.org
@@ -26,18 +49,21 @@ If not found → show:
 
 ### 4. Install dashboard dependencies (first run only)
 ```bash
-cd {plugin_root}/dashboard
-npm install --silent
+[ -d "${DASHBOARD_DIR}/node_modules" ] || (cd "${DASHBOARD_DIR}" && npm install --silent)
 ```
 
-### 5. Build dashboard
+### 5. Build dashboard (if dist/ missing)
 ```bash
-npm run build --silent
+if [ ! -d "${DASHBOARD_DIR}/dist" ]; then
+  cd "${DASHBOARD_DIR}" && npm run build --silent
+fi
 ```
+
+If build fails → stop and show npm error output.
 
 ### 6. Start dashboard server
 ```bash
-node server.js --port={dashboard_port} --root={project_root}
+node "${SERVER}" --port={dashboard_port} --root={project_root}
 ```
 
 Server binds to `127.0.0.1` only — never `0.0.0.0`.
@@ -62,4 +88,4 @@ Show the actual port used in the success message.
 
 ---
 
-*dashboard skill v1.0 — Neo Agents AI*
+*dashboard skill v1.4 — Neo Agents AI*
