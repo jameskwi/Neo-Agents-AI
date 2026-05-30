@@ -8,5 +8,11 @@
   "homepage": "https://github.com/jameskwi/Neo-Agents-AI",
   "repository": "https://github.com/jameskwi/Neo-Agents-AI",
   "license": "MIT",
-  "keywords": ["agents", "ba", "architecture", "requirements", "dashboard", "planning"]
+  "keywords": ["agents", "ba", "architecture", "requirements", "dashboard", "planning"],
+  "runtime": {
+    "requires_nodejs": true,
+    "requires_python3": false,
+    "dashboard_default_port": 7842,
+    "dashboard_build_required": false
+  }
 }

@@ -1,58 +1,1134 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <title>Neo Agents AI — Dashboard</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <style>
-    :root {
-      --bg: #1a1f26;
-      --surface: #222830;
-      --surface-2: #2a3140;
-      --surface-3: #323a4a;
-      --border: #333d4d;
-      --border-bright: #475264;
-      --text: #e8edf5;
-      --text-soft: #c5cdd9;
-      --muted: #7a8699;
-      --faint: #4f5666;
-      --accent: #76ABAE;
-      --accent-dim: #5e9295;
-      --accent-soft: rgba(118,171,174,.14);
-      --danger: #FF5722;
-      --amber: #f0b429;
-      --green: #4caf78;
-      --indigo: #7c95ff;
-      --purple: #c57ff5;
-      --sans: "DM Sans", system-ui, sans-serif;
-      --mono: "DM Mono", ui-monospace, monospace;
-    }
-    * { box-sizing: border-box; }
-    html, body {
-      margin: 0;
-      height: 100%;
-      background: var(--bg);
-      color: var(--text);
-      font-family: var(--sans);
-      overflow: hidden;
-      -webkit-font-smoothing: antialiased;
-    }
-    body { font-size: 13px; line-height: 1.5; }
-    button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; padding: 0; }
-    ::selection { background: rgba(118,171,174,.35); }
-    h1,h2,h3,h4,h5 { font-family: var(--sans); margin: 0; font-weight: 700; letter-spacing: -.01em; color: var(--text); }
-    ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: #3a4456; border-radius: 3px; }
-    ::-webkit-scrollbar-thumb:hover { background: #4a5468; }
-  </style>
-  <script type="module" crossorigin src="/assets/index-Bk_tgocE.js"></script>
-  <link rel="stylesheet" crossorigin href="/assets/index-DEmoy4nL.css">
+<meta charset="utf-8"/>
+<title>Neo Agents AI — Dashboard</title>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<style>
+:root {
+  --bg:#1a1f26; --surface:#222830; --surface-2:#2a3140; --surface-3:#323a4a;
+  --border:#333d4d; --border-bright:#475264;
+  --text:#e8edf5; --text-soft:#c5cdd9; --muted:#7a8699; --faint:#4f5666;
+  --accent:#76ABAE; --accent-dim:#5e9295; --accent-soft:rgba(118,171,174,.14);
+  --danger:#FF5722; --amber:#f0b429; --green:#4caf78;
+  --indigo:#7c95ff; --purple:#c57ff5;
+  --sans:"DM Sans",system-ui,sans-serif; --mono:"DM Mono",ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font-smoothing:antialiased}
+::selection{background:rgba(118,171,174,.35)}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:#3a4456;border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:#4a5468}
+@keyframes panelIn   { from{transform:translateX(100%)} to{transform:translateX(0)} }
+@keyframes fadeIn    { from{opacity:0} to{opacity:1} }
+@keyframes fadeUp    { from{opacity:0;transform:translateY(5px)} to{opacity:1;transform:translateY(0)} }
+@keyframes backdropIn{ from{opacity:0} to{opacity:1} }
+@keyframes modalIn   { from{opacity:0;transform:translateY(10px) scale(.975)} to{opacity:1;transform:translateY(0) scale(1)} }
+@keyframes phaseGlow { 0%,100%{box-shadow:0 0 0 0 rgba(118,171,174,.55)} 50%{box-shadow:0 0 0 5px rgba(118,171,174,0)} }
+@keyframes dotGlow   { 0%,100%{box-shadow:0 0 0 0 rgba(118,171,174,.5)} 50%{box-shadow:0 0 0 5px rgba(118,171,174,0),0 0 10px rgba(118,171,174,.12)} }
+@keyframes toastIn   { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+@keyframes termCursor{ 0%,100%{opacity:1} 50%{opacity:0} }
+.term-cursor{display:inline-block;width:8px;height:14px;background:var(--accent);vertical-align:middle;margin-left:2px;border-radius:1px;animation:termCursor 1s step-end infinite}
+
+/* Markdown typography */
+.md{font-family:var(--sans)}
+.md h1{font-size:22px;font-weight:700;color:var(--text);margin:0 0 16px;line-height:1.2;letter-spacing:-.02em}
+.md h2{font-size:15px;font-weight:700;color:var(--text);margin:22px 0 8px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.md h2:first-of-type{margin-top:2px}
+.md h3{font-size:12px;font-weight:700;color:var(--accent);margin:14px 0 5px;text-transform:uppercase;letter-spacing:.06em}
+.md p{font-size:12.5px;color:var(--text-soft);line-height:1.75;margin:0 0 10px}
+.md strong{color:var(--text);font-weight:600}
+.md em{font-style:italic;color:var(--text-soft)}
+.md a{color:var(--accent)}
+.md code{font-family:var(--mono);background:var(--surface-2);color:var(--accent);padding:1px 6px;border-radius:3px;font-size:11px;border:1px solid var(--border)}
+.md pre{background:#0e1218;border-radius:8px;padding:14px 18px;margin:10px 0 16px;overflow-x:auto;border:1px solid #1e2530}
+.md pre code{background:none;color:#99afc4;border:none;padding:0;font-size:11.5px;line-height:1.75}
+.md table{width:100%;border-collapse:collapse;margin:10px 0 16px}
+.md th{background:var(--surface-2);color:var(--text);font-weight:600;padding:7px 12px;text-align:left;border:1px solid var(--border);font-size:11px;letter-spacing:.03em;text-transform:uppercase}
+.md td{padding:6px 12px;border:1px solid var(--border);color:var(--text-soft);font-size:12px;vertical-align:top}
+.md tr:nth-child(even) td{background:rgba(42,49,64,.45)}
+.md blockquote{border-left:3px solid var(--accent);background:var(--accent-soft);margin:10px 0 16px;padding:10px 16px;border-radius:0 6px 6px 0}
+.md blockquote p{color:var(--text-soft);margin:0}
+.md ul,.md ol{font-size:12.5px;color:var(--text-soft);line-height:1.75;margin:0 0 10px;padding-left:22px}
+.md li{margin:3px 0}
+.md li::marker{color:var(--accent)}
+.md hr{border:none;border-top:1px solid var(--border);margin:20px 0}
+</style>
 </head>
 <body>
-  <div id="root"></div>
+<div id="root"></div>
+
+<script type="text/babel">
+const { useState, useEffect, useRef, useCallback } = React;
+const HEADER_H = 56, TABS_H = 48, OFFSET = 104;
+
+/* ── Token from URL ── */
+const TOKEN = new URLSearchParams(window.location.search).get("token") || "";
+function apiFetch(url, opts = {}) {
+  const sep = url.includes("?") ? "&" : "?";
+  const u = TOKEN ? url + sep + "token=" + TOKEN : url;
+  return fetch(u, {
+    ...opts,
+    headers: { "Content-Type": "application/json", "x-access-token": TOKEN, ...(opts.headers || {}) },
+  });
+}
+
+/* ── Agent definitions ── */
+const AGENTS = {
+  PM:  { code:"PM",  name:"Product Manager",    color:"#76ABAE", role:"Roadmap & tickets" },
+  BA:  { code:"BA",  name:"Business Analyst",   color:"#7c95ff", role:"Requirements & flows" },
+  SA:  { code:"SA",  name:"Solution Architect", color:"#c57ff5", role:"System & data design" },
+  DS:  { code:"DS",  name:"Designer",           color:"#FF6F91", role:"Wireframes & UI" },
+  DEV: { code:"DEV", name:"Engineer",           color:"#FFB547", role:"Implementation" },
+};
+
+const COLUMNS = [
+  { key:"Backlog",     color:"#7a8699" },
+  { key:"In Progress", color:"#f0b429" },
+  { key:"Review",      color:"#76ABAE" },
+  { key:"Done",        color:"#4caf78" },
+];
+
+/* ── Column → status mapping ── */
+function colToStatus(col) {
+  if (col === "Done")        return "done";
+  if (col === "In Progress") return "progress";
+  if (col === "Review")      return "review";
+  return "backlog";
+}
+
+/* ── Icons ── */
+const ListIco    = () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/></svg>;
+const BoardIco   = () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="6" height="16" rx="1.5" stroke="currentColor" strokeWidth="1.6"/><rect x="11" y="4" width="6" height="10" rx="1.5" stroke="currentColor" strokeWidth="1.6"/><rect x="19" y="4" width="2" height="16" rx="1" stroke="currentColor" strokeWidth="1.6"/></svg>;
+const DocIco     = () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9l-6-6z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round"/><path d="M14 3v6h6" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round"/></svg>;
+const TimeIco    = () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.6"/><path d="M12 7v5l3 2" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/></svg>;
+const TermIco    = () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><rect x="2" y="3" width="20" height="18" rx="2.5" stroke="currentColor" strokeWidth="1.6"/><path d="M6 9l4 3-4 3" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/><path d="M13 18h5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/></svg>;
+const CheckIco   = () => <svg width="11" height="11" viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/></svg>;
+const CloseIco   = () => <svg width="11" height="11" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round"/></svg>;
+const UsersIco   = () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/><circle cx="9" cy="7" r="4" stroke="currentColor" strokeWidth="1.6"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/></svg>;
+const ActivityIco= () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>;
+const ArrowIco   = () => <svg width="10" height="10" viewBox="0 0 24 24" fill="none"><path d="M5 12h14m-6-6l6 6-6 6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>;
+const DlIco      = () => <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round"/><polyline points="7 10 12 15 17 10" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/><line x1="12" y1="15" x2="12" y2="3" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round"/></svg>;
+const PlusIco    = () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg>;
+const ChevIco    = ({open}) => <svg width="11" height="11" viewBox="0 0 24 24" fill="none" style={{transform:open?"rotate(90deg)":"rotate(0deg)",transition:"transform .15s"}}><path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>;
+
+/* ── Primitives ── */
+function Badge({ code, size=34, radius=8 }) {
+  const a = AGENTS[code];
+  return (
+    <span className="inline-flex items-center justify-center font-bold text-[#0e1218] tracking-[.04em] shrink-0 select-none"
+      style={{ width:size, height:size, borderRadius:radius,
+               background:(a&&a.color)||"var(--muted)",
+               fontSize:Math.max(8.5, Math.round(size*.32)), fontFamily:"var(--sans)" }}>
+      {code||"?"}
+    </span>
+  );
+}
+
+const PILL_STYLES = {
+  backlog:  "bg-[var(--surface-2)] text-[var(--muted)] border-[var(--border)]",
+  progress: "bg-[rgba(240,180,41,0.12)] text-[var(--amber)] border-[rgba(240,180,41,0.3)]",
+  review:   "bg-[var(--accent-soft)] text-[var(--accent)] border-[rgba(118,171,174,0.3)]",
+  done:     "bg-[rgba(76,175,120,0.12)] text-[var(--green)] border-[rgba(76,175,120,0.3)]",
+};
+const PILL_LABELS = { backlog:"Backlog", progress:"In Progress", review:"Review", done:"Done" };
+function Pill({ status }) {
+  const s = status || "backlog";
+  return (
+    <span className={"inline-block font-medium uppercase tracking-[.08em] text-[9.5px] px-[8px] py-[3px] rounded-[4px] border whitespace-nowrap "+(PILL_STYLES[s]||PILL_STYLES.backlog)}>
+      {PILL_LABELS[s]||s}
+    </span>
+  );
+}
+
+/* ── Step Dot (board card) ── */
+const STEP_ST = {
+  "✅ done":        { bg:"var(--green)",     fg:"#0e1218", isDone:true },
+  "⏳ in progress": { bg:"var(--amber)",     fg:"#0e1218", isDone:false },
+  "🔲 not started": { bg:"var(--surface-3)", fg:"var(--faint)", isDone:false },
+};
+function StepDot({ label, value }) {
+  const st = STEP_ST[value] || STEP_ST["🔲 not started"];
+  return (
+    <span title={label+" — "+(value||"not started")}
+      className="inline-flex items-center justify-center font-medium select-none shrink-0"
+      style={{ width:18, height:18, borderRadius:4, background:st.bg, color:st.fg, fontSize:8.5, fontFamily:"var(--sans)" }}>
+      {st.isDone ? <svg width="8" height="8" viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></svg> : label}
+    </span>
+  );
+}
+
+/* ── Toast ── */
+function Toast({ msg, onDone }) {
+  useEffect(() => { const t = setTimeout(onDone, 2400); return () => clearTimeout(t); }, []);
+  return (
+    <div className="fixed bottom-6 left-1/2 z-[9999] bg-[var(--surface-2)] border border-[rgba(76,175,120,0.4)] border-l-[3px] border-l-[var(--green)] rounded-[8px] px-[18px] py-[11px] text-[12px] text-[var(--text)] inline-flex items-center gap-[10px] shadow-lg"
+      style={{ transform:"translateX(-50%)", animation:"toastIn .22s ease-out" }}>
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="var(--green)" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+      {msg}
+    </div>
+  );
+}
+
+/* ════════════════════════════════════════════
+   MARKDOWN RENDERER (no external lib)
+════════════════════════════════════════════ */
+function renderMd(raw) {
+  if (!raw) return "";
+  let html = raw
+    .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
+    // fenced code blocks
+    .replace(/```(\w*)\n([\s\S]*?)```/g, (_,lang,code) => `<pre><code>${code}</code></pre>`)
+    // headings
+    .replace(/^### (.+)$/gm, "<h3>$1</h3>")
+    .replace(/^## (.+)$/gm,  "<h2>$1</h2>")
+    .replace(/^# (.+)$/gm,   "<h1>$1</h1>")
+    // blockquote
+    .replace(/^&gt; (.+)$/gm, "<blockquote><p>$1</p></blockquote>")
+    // hr
+    .replace(/^---+$/gm, "<hr/>")
+    // bold / italic
+    .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+    .replace(/_(.+?)_/g, "<em>$1</em>")
+    // inline code
+    .replace(/`([^`]+)`/g, "<code>$1</code>")
+    // tables
+    .replace(/(\|.+\|\n)+/g, (tbl) => {
+      const rows = tbl.trim().split("\n");
+      if (rows.length < 2) return tbl;
+      const head = rows[0].split("|").filter(c=>c.trim()).map(c=>`<th>${c.trim()}</th>`).join("");
+      const body = rows.slice(2).map(r => {
+        const cells = r.split("|").filter(c=>c.trim()).map(c=>`<td>${c.trim()}</td>`).join("");
+        return `<tr>${cells}</tr>`;
+      }).join("");
+      return `<table><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table>`;
+    })
+    // unordered lists
+    .replace(/(^- .+\n?)+/gm, (block) => {
+      const items = block.trim().split("\n").map(l=>`<li>${l.replace(/^- /,"")}</li>`).join("");
+      return `<ul>${items}</ul>`;
+    })
+    // ordered lists
+    .replace(/(^\d+\. .+\n?)+/gm, (block) => {
+      const items = block.trim().split("\n").map(l=>`<li>${l.replace(/^\d+\. /,"")}</li>`).join("");
+      return `<ol>${items}</ol>`;
+    })
+    // paragraphs (lines not already wrapped)
+    .replace(/^(?!<[houpl]|<bl|<tab|<pre|<hr)(.+)$/gm, (line) => line.trim() ? `<p>${line}</p>` : "");
+  return html;
+}
+
+/* ════════════════════════════════════════════
+   KPI GRID
+════════════════════════════════════════════ */
+function KpiCard({ label, value, tone, foot, icon }) {
+  const colors = { accent:"var(--accent)", amber:"var(--amber)", green:"var(--green)", default:"var(--text)" };
+  return (
+    <div className="bg-[var(--surface)] border border-[var(--border)] rounded-[10px] px-5 py-[18px] flex flex-col gap-[10px] transition-colors hover:border-[var(--border-bright)] cursor-default">
+      <div className="flex items-center justify-between text-[var(--muted)] text-[11px] tracking-[.06em] uppercase">
+        <span>{label}</span>
+        {icon && <span className="w-6 h-6 rounded-[6px] inline-flex items-center justify-center bg-[var(--surface-2)] text-[var(--muted)]">{icon}</span>}
+      </div>
+      <div className="text-[32px] font-[500] tracking-[-0.02em] leading-none" style={{ color: colors[tone]||colors.default }}>
+        {value}
+      </div>
+      <div className="text-[10.5px] text-[var(--muted)]">{foot}</div>
+    </div>
+  );
+}
+
+/* ════════════════════════════════════════════
+   AGENTS PANEL
+════════════════════════════════════════════ */
+function AgentsPanel({ tasks, docs }) {
+  return (
+    <div className="bg-[var(--surface)] border border-[var(--border)] rounded-[10px] overflow-hidden flex flex-col">
+      <div className="flex items-center justify-between px-[18px] py-[14px] border-b border-[var(--border)] shrink-0">
+        <span className="text-[13px] font-bold text-[var(--text)]">Agents</span>
+        <span className="text-[10.5px] text-[var(--muted)] uppercase tracking-[.08em]">5 active</span>
+      </div>
+      <div className="flex flex-col divide-y divide-[var(--border)]">
+        {Object.values(AGENTS).map(a => {
+          const tasksDone = tasks.filter(t => (t.agent||"") === a.code && t.column === "Done").length;
+          const docCount  = (docs[a.code]||[]).length;
+          const active    = tasks.find(t => (t.agent||"") === a.code && t.column === "In Progress");
+          return (
+            <div key={a.code} className="flex items-center gap-[14px] px-[18px] py-[12px] hover:bg-[var(--surface-2)] transition-colors cursor-default">
+              <Badge code={a.code} size={34} radius={8}/>
+              <div className="flex-1 min-w-0 flex flex-col gap-[3px]">
+                <div className="flex items-center gap-2">
+                  <span className="text-[13px] font-semibold text-[var(--text)] leading-none">{a.name}</span>
+                  {active && (
+                    <span className="inline-flex items-center gap-[4px] text-[9px] font-medium uppercase tracking-[.07em] text-[var(--amber)]">
+                      <span className="w-[5px] h-[5px] rounded-full bg-[var(--amber)]"/>Active
+                    </span>
+                  )}
+                </div>
+                <div className="text-[10.5px] text-[var(--muted)]">{a.role}</div>
+              </div>
+              <div className="text-right shrink-0">
+                <div className="text-[12px] font-semibold text-[var(--text-soft)] leading-none mb-[3px]">
+                  {docCount} <span className="text-[var(--faint)] font-normal">docs</span>
+                </div>
+                <div className="text-[10.5px] text-[var(--muted)]">{tasksDone} tasks done</div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+/* ════════════════════════════════════════════
+   RECENT TASKS PANEL
+════════════════════════════════════════════ */
+function RecentTasksPanel({ tasks, onSelect }) {
+  const sorted = [...tasks]
+    .sort((a, b) => new Date(b.updated_at||b.created_at||0) - new Date(a.updated_at||a.created_at||0))
+    .slice(0, 8);
+  return (
+    <div className="bg-[var(--surface)] border border-[var(--border)] rounded-[10px] overflow-hidden flex flex-col">
+      <div className="flex items-center justify-between px-[18px] py-[14px] border-b border-[var(--border)] shrink-0">
+        <span className="text-[13px] font-bold text-[var(--text)]">Recent Tasks</span>
+        <span className="text-[10.5px] text-[var(--muted)] uppercase tracking-[.08em]">{tasks.length} total</span>
+      </div>
+      <div className="flex flex-col divide-y divide-[var(--border)] overflow-y-auto" style={{ maxHeight:328 }}>
+        {sorted.map(task => (
+          <button key={task.id} onClick={() => onSelect(task)}
+            className="flex items-center gap-[10px] px-[18px] py-[10px] hover:bg-[var(--surface-2)] transition-colors text-left w-full group">
+            <Badge code={task.agent} size={24} radius={5}/>
+            <div className="flex-1 min-w-0">
+              <div className="text-[12.5px] font-semibold text-[var(--text)] truncate leading-none mb-[4px] group-hover:text-[var(--accent)] transition-colors">
+                {task.title}
+              </div>
+              <div className="flex items-center gap-[8px]">
+                <span className="text-[10px] text-[var(--faint)]" style={{fontFamily:"var(--mono)"}}>{task.id}</span>
+              </div>
+            </div>
+            <Pill status={colToStatus(task.column)}/>
+          </button>
+        ))}
+        {sorted.length === 0 && <div className="text-[11px] text-[var(--faint)] text-center py-8">No tasks yet</div>}
+      </div>
+    </div>
+  );
+}
+
+/* ════════════════════════════════════════════
+   PIPELINE BAR
+════════════════════════════════════════════ */
+const PIPE_SEGS = [
+  { key:"Backlog",     label:"Backlog",     color:"#7a8699" },
+  { key:"In Progress", label:"In Progress", color:"#f0b429" },
+  { key:"Review",      label:"Review",      color:"#76ABAE" },
+  { key:"Done",        label:"Done",        color:"#4caf78" },
+];
+function PipelineBar({ tasks }) {
+  const counts = {};
+  PIPE_SEGS.forEach(s => { counts[s.key] = tasks.filter(t => t.column === s.key).length; });
+  const total = tasks.length || 1;
+  return (
+    <div className="bg-[var(--surface)] border border-[var(--border)] rounded-[10px] px-[18px] py-[16px]">
+      <div className="flex items-center justify-between mb-[14px]">
+        <span className="text-[13px] font-bold text-[var(--text)]">Pipeline</span>
+        <span className="text-[10.5px] text-[var(--muted)]">{tasks.length} tasks total</span>
+      </div>
+      <div className="flex gap-[2px] mb-[14px]" style={{ height:8, borderRadius:4, overflow:"hidden" }}>
+        {PIPE_SEGS.map(s => {
+          const c = counts[s.key]||0;
+          if (!c) return null;
+          return <div key={s.key} title={`${s.label}: ${c}`} style={{ flex:c/total, background:s.color, minWidth:6 }}/>;
+        })}
+      </div>
+      <div className="flex items-center gap-[24px] flex-wrap">
+        {PIPE_SEGS.map(s => (
+          <div key={s.key} className="flex items-center gap-[7px]">
+            <span className="w-[10px] h-[10px] rounded-[2px] shrink-0" style={{ background:s.color }}/>
+            <span className="text-[11px] text-[var(--muted)]">{s.label}</span>
+            <span className="text-[11px] font-semibold text-[var(--text-soft)]">{counts[s.key]||0}</span>
+          </div>
+        ))}
+        <div className="ml-auto text-[10.5px] text-[var(--muted)] flex items-center gap-[4px]">
+          <span style={{ color:"var(--green)", fontWeight:600 }}>
+            {Math.round((counts["Done"]||0)/total*100)}%
+          </span>
+          <span>complete</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ════════════════════════════════════════════
+   OVERVIEW TAB
+════════════════════════════════════════════ */
+function OverviewTab({ tasks, docs, onSelectTask, onNavigateBoard }) {
+  const total  = tasks.length;
+  const active = tasks.filter(t => t.column === "In Progress").length;
+  const done   = tasks.filter(t => t.column === "Done").length;
+  const docCount = Object.values(docs).reduce((s, a) => s + (a||[]).length, 0);
+
+  const handleRecentClick = (task) => {
+    onNavigateBoard(task);
+  };
+
+  return (
+    <div className="px-6 py-6 max-w-[1400px] mx-auto flex flex-col gap-[14px]" style={{ animation:"fadeUp .2s ease-out" }}>
+      <div className="grid grid-cols-4 gap-[14px]">
+        <KpiCard label="Total Tasks"   value={total}    tone="accent" foot={`${total-done} open · ${done} done`}  icon={<ListIco/>}/>
+        <KpiCard label="In Progress"   value={active}   tone="amber"  foot="tasks active now"                      icon={<ActivityIco/>}/>
+        <KpiCard label="Completed"     value={done}     tone="green"  foot="tasks done"                            icon={<CheckIco/>}/>
+        <KpiCard label="Agent Docs"    value={docCount} tone="accent" foot="across all agents"                     icon={<UsersIco/>}/>
+      </div>
+      <div className="grid gap-[14px]" style={{ gridTemplateColumns:"1fr 1fr" }}>
+        <AgentsPanel tasks={tasks} docs={docs}/>
+        <RecentTasksPanel tasks={tasks} onSelect={handleRecentClick}/>
+      </div>
+      <PipelineBar tasks={tasks}/>
+    </div>
+  );
+}
+
+/* ════════════════════════════════════════════
+   TASK DETAIL MODAL
+════════════════════════════════════════════ */
+const MODAL_TABS = [
+  { key:"brd",  label:"BRD",  docField:"ba_doc"   },
+  { key:"spec", label:"Spec", docField:"spec_doc"  },
+  { key:"sa",   label:"SA",   docField:"sa_doc"    },
+  { key:"ds",   label:"DS",   docField:"ds_doc"    },
+  { key:"dev",  label:"DEV",  docField:"dev_doc"   },
+];
+
+const STEP_CFG = {
+  "✅ done":        { bg:"rgba(76,175,120,0.13)", border:"rgba(76,175,120,0.32)", text:"#4caf78", dot:"#4caf78", label:"Done" },
+  "⏳ in progress": { bg:"rgba(240,180,41,0.12)", border:"rgba(240,180,41,0.32)", text:"#f0b429", dot:"#f0b429", label:"In Progress" },
+  "🔲 not started": { bg:"var(--surface-2)",      border:"var(--border)",         text:"var(--faint)", dot:"var(--surface-3)", label:"Not started" },
+};
+
+function StepPill({ agent, value }) {
+  const c = STEP_CFG[value] || STEP_CFG["🔲 not started"];
+  return (
+    <div className="inline-flex items-center gap-[6px] px-[10px] py-[5px] rounded-full border select-none shrink-0"
+      style={{ background:c.bg, borderColor:c.border }}>
+      {value === "✅ done"
+        ? <span className="w-[14px] h-[14px] rounded-full inline-flex items-center justify-center shrink-0" style={{ background:"rgba(76,175,120,0.25)", color:"#4caf78" }}>
+            <svg width="8" height="8" viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+          </span>
+        : <span className="w-[6px] h-[6px] rounded-full shrink-0" style={{ background:c.dot }}/>
+      }
+      <span className="text-[11px] font-bold tracking-[.04em]" style={{ color:c.text, fontFamily:"var(--sans)" }}>{agent}</span>
+      <span className="text-[10px] font-medium opacity-80" style={{ color:c.text }}>{c.label}</span>
+    </div>
+  );
+}
+
+function TaskModal({ task, onClose, onMove }) {
+  const [activeTab, setActiveTab] = useState("brd");
+  const [docContent, setDocContent] = useState({});
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const fn = e => { if (e.key === "Escape") onClose(); };
+    window.addEventListener("keydown", fn);
+    return () => window.removeEventListener("keydown", fn);
+  }, [onClose]);
+
+  const steps = task.steps || {};
+
+  const loadDoc = async (tabKey) => {
+    const tabDef = MODAL_TABS.find(t => t.key === tabKey);
+    if (!tabDef) return;
+    const path = task.docs && task.docs[tabDef.docField];
+    if (!path) { setDocContent(p => ({...p, [tabKey]:"__empty__"})); return; }
+    if (docContent[tabKey]) return;
+    setLoading(true);
+    try {
+      const r = await apiFetch("/api/doc?path=" + encodeURIComponent(path));
+      const text = await r.text();
+      setDocContent(p => ({...p, [tabKey]: text}));
+    } catch { setDocContent(p => ({...p, [tabKey]:"__error__"})); }
+    finally { setLoading(false); }
+  };
+
+  useEffect(() => { loadDoc(activeTab); }, [activeTab, task]);
+
+  const handleTabClick = (key) => {
+    setActiveTab(key);
+    loadDoc(key);
+  };
+
+  const col = COLUMNS.find(c => c.key === task.column);
+  const targets = COLUMNS.filter(c => c.key !== task.column);
+
+  const content = docContent[activeTab];
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center"
+      style={{ background:"rgba(10,14,20,0.72)", backdropFilter:"blur(2px)", animation:"backdropIn .18s ease-out" }}>
+      <div className="absolute inset-0" onClick={onClose}/>
+      <div className="relative flex flex-col w-full bg-[var(--surface)] rounded-[12px] overflow-hidden"
+        style={{ maxWidth:820, maxHeight:"88vh",
+                 boxShadow:"0 0 0 1px var(--border), 0 32px 80px rgba(0,0,0,.65), 0 8px 24px rgba(0,0,0,.4)",
+                 animation:"modalIn .22s ease-out" }}
+        onClick={e => e.stopPropagation()}>
+
+        {/* Header */}
+        <div className="flex items-start gap-4 px-7 pt-6 pb-4 border-b border-[var(--border)] shrink-0">
+          <div className="flex-1 min-w-0 flex flex-col gap-[5px]">
+            <span className="text-[11px] text-[var(--muted)]" style={{ fontFamily:"var(--mono)" }}>{task.id}</span>
+            <h2 className="text-[15px] font-bold text-[var(--text)] leading-[1.3] m-0 tracking-[-0.01em]">{task.title}</h2>
+          </div>
+          {/* Move dropdown */}
+          <div className="flex items-center gap-2 shrink-0">
+            <select
+              className="text-[11px] rounded-[6px] border px-2 py-1 cursor-pointer"
+              style={{ background:"var(--surface-2)", borderColor:"var(--border)", color:"var(--text-soft)" }}
+              value={task.column}
+              onChange={e => { onMove(task.id, e.target.value); }}>
+              {COLUMNS.map(c => <option key={c.key} value={c.key}>{c.key}</option>)}
+            </select>
+            <button onClick={onClose}
+              className="w-7 h-7 shrink-0 rounded-[6px] bg-[var(--surface-2)] border border-[var(--border)] inline-flex items-center justify-center text-[var(--muted)] hover:text-[var(--text)] hover:border-[var(--border-bright)] transition-colors">
+              <CloseIco/>
+            </button>
+          </div>
+        </div>
+
+        {/* Step pills */}
+        <div className="flex items-center gap-[8px] px-7 py-3 border-b border-[var(--border)] shrink-0 flex-wrap">
+          {["ba","sa","ds","dev"].map(k => (
+            <StepPill key={k} agent={k.toUpperCase()} value={steps[k]||"🔲 not started"}/>
+          ))}
+        </div>
+
+        {/* Tab bar */}
+        <div className="flex items-stretch border-b border-[var(--border)] shrink-0 px-3 bg-[var(--surface)]">
+          {MODAL_TABS.map(t => {
+            const on = activeTab === t.key;
+            return (
+              <button key={t.key} onClick={() => handleTabClick(t.key)}
+                className="inline-flex items-center px-[14px] h-11 text-[11px] font-semibold tracking-[.07em] uppercase border-b-[2px] transition-colors whitespace-nowrap"
+                style={{ color: on?"var(--accent)":"var(--muted)", borderBottomColor: on?"var(--accent)":"transparent" }}>
+                {t.label}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Content */}
+        <div className="flex-1 min-h-0 overflow-y-auto px-7 py-5">
+          {loading && <div className="text-[12px] text-[var(--muted)] text-center py-8">Loading…</div>}
+          {!loading && (!content || content === "__empty__") && (
+            <div className="text-[12.5px] text-[var(--muted)] text-center py-12">
+              Not generated yet. Run the agent first.
+            </div>
+          )}
+          {!loading && content === "__error__" && (
+            <div className="text-[12px] text-[var(--danger)] text-center py-8">Failed to load document.</div>
+          )}
+          {!loading && content && content !== "__empty__" && content !== "__error__" && (
+            <div className="md" dangerouslySetInnerHTML={{ __html: renderMd(content) }}/>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ════════════════════════════════════════════
+   BOARD TAB
+════════════════════════════════════════════ */
+function TaskCard({ task, onSelect, onMove, highlighted }) {
+  const targets = COLUMNS.filter(c => c.key !== task.column);
+  const steps   = task.steps || {};
+  return (
+    <div onClick={() => onSelect(task)}
+      className="group relative bg-[var(--surface-2)] border rounded-[8px] px-[13px] pt-3 pb-[10px] flex flex-col gap-[9px] cursor-pointer transition-all hover:bg-[var(--surface-3)]"
+      style={{ borderColor: highlighted ? "var(--accent)" : "var(--border)" }}>
+      <div className="flex items-center gap-[6px]">
+        <span className="text-[10px] text-[var(--muted)] ml-auto" style={{ fontFamily:"var(--mono)" }}>{task.id}</span>
+      </div>
+      <div className="text-[13px] font-semibold text-[var(--text)] leading-[1.35]">{task.title}</div>
+      <div className="flex items-center gap-[7px] min-w-0">
+        {task.agent && <Badge code={task.agent} size={22} radius={5}/>}
+        <div className="flex items-center gap-[3px]">
+          {["ba","sa","ds","dev"].map(k => (
+            <StepDot key={k} label={k.toUpperCase()} value={steps[k]}/>
+          ))}
+        </div>
+        <span className="flex-1"/>
+        {task.updated_at && (
+          <span className="text-[10.5px] text-[var(--muted)] whitespace-nowrap">
+            {new Date(task.updated_at).toLocaleDateString("en-US",{month:"short",day:"numeric"})}
+          </span>
+        )}
+      </div>
+      {/* Move buttons on hover */}
+      <div className="flex items-center gap-[5px] flex-wrap max-h-0 overflow-hidden group-hover:max-h-[40px] opacity-0 group-hover:opacity-100 transition-all duration-150">
+        {targets.map(t => (
+          <button key={t.key} onClick={e => { e.stopPropagation(); onMove(task.id, t.key); }}
+            className="text-[9.5px] text-[var(--muted)] hover:text-[var(--text-soft)] px-[7px] py-[2px] rounded-[4px] bg-[var(--surface)] border border-[var(--border)] hover:border-[var(--border-bright)] transition-colors whitespace-nowrap inline-flex items-center gap-[4px]">
+            <ArrowIco/>{t.key}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function BoardTab({ tasks, onMove, onTaskUpdate, highlighted, setHighlighted }) {
+  const [selected, setSelected]    = useState(null);
+  const [newTaskCol, setNewTaskCol]= useState(null);
+  const [newTitle, setNewTitle]    = useState("");
+  const [creating, setCreating]    = useState(false);
+
+  const handleCreate = async (col) => {
+    if (!newTitle.trim()) return;
+    setCreating(true);
+    try {
+      const r = await apiFetch("/api/task/create", {
+        method:"POST",
+        body: JSON.stringify({ title: newTitle.trim(), column: col }),
+      });
+      const j = await r.json();
+      if (j.ok) { onTaskUpdate(); setNewTitle(""); setNewTaskCol(null); }
+    } finally { setCreating(false); }
+  };
+
+  const handleMove = async (id, col) => {
+    await apiFetch("/api/task/move", {
+      method:"POST",
+      body: JSON.stringify({ id, column: col }),
+    });
+    onTaskUpdate();
+    if (selected && selected.id === id) setSelected(p => ({...p, column:col}));
+  };
+
+  return (
+    <div className="px-5 py-5 flex flex-col gap-3" style={{ height:"calc(100vh - 104px)" }}>
+      {/* Board header */}
+      <div className="flex items-center gap-3 shrink-0">
+        <span className="text-[13px] font-bold text-[var(--text)]">Board</span>
+        <span className="text-[11px] text-[var(--muted)]">{tasks.length} tasks</span>
+        <button onClick={() => setNewTaskCol("Backlog")}
+          className="ml-auto inline-flex items-center gap-[6px] text-[11px] font-medium px-3 py-[6px] rounded-[7px] border transition-colors"
+          style={{ background:"var(--accent-soft)", borderColor:"rgba(118,171,174,.3)", color:"var(--accent)" }}>
+          <PlusIco/>New Task
+        </button>
+      </div>
+
+      {/* New task inline form */}
+      {newTaskCol && (
+        <div className="flex items-center gap-2 bg-[var(--surface)] border border-[var(--accent)] rounded-[8px] px-3 py-2 shrink-0">
+          <input autoFocus value={newTitle} onChange={e => setNewTitle(e.target.value)}
+            onKeyDown={e => { if (e.key==="Enter") handleCreate(newTaskCol); if (e.key==="Escape") setNewTaskCol(null); }}
+            placeholder="Task title…"
+            className="flex-1 bg-transparent border-none outline-none text-[13px] text-[var(--text)] placeholder:text-[var(--muted)]"/>
+          <select value={newTaskCol} onChange={e => setNewTaskCol(e.target.value)}
+            className="text-[11px] rounded-[5px] border px-2 py-1"
+            style={{ background:"var(--surface-2)", borderColor:"var(--border)", color:"var(--text-soft)" }}>
+            {COLUMNS.map(c => <option key={c.key} value={c.key}>{c.key}</option>)}
+          </select>
+          <button onClick={() => handleCreate(newTaskCol)} disabled={creating}
+            className="text-[11px] font-medium px-3 py-1 rounded-[5px]"
+            style={{ background:"var(--accent)", color:"#0e1218" }}>
+            {creating ? "…" : "Add"}
+          </button>
+          <button onClick={() => setNewTaskCol(null)} className="text-[var(--muted)] hover:text-[var(--text)] transition-colors"><CloseIco/></button>
+        </div>
+      )}
+
+      {/* Columns */}
+      <div className="grid grid-cols-4 gap-[14px] flex-1 min-h-0 overflow-hidden">
+        {COLUMNS.map(col => {
+          const cards = tasks.filter(t => t.column === col.key);
+          return (
+            <div key={col.key} className="bg-[var(--surface)] border border-[var(--border)] rounded-[10px] flex flex-col min-h-0 overflow-hidden"
+              style={{ borderTop:"3px solid "+col.color }}>
+              <div className="px-4 pt-[14px] pb-3 flex items-center justify-between border-b border-[var(--border)] shrink-0">
+                <span className="text-[12px] font-bold uppercase tracking-[.08em] text-[var(--text)]">{col.key}</span>
+                <span className="text-[10.5px] rounded-full px-2 py-px bg-[var(--surface-2)] border border-[var(--border)]" style={{ color:col.color }}>{cards.length}</span>
+              </div>
+              <div className="p-3 flex flex-col gap-[10px] overflow-y-auto flex-1">
+                {cards.length === 0
+                  ? <div className="text-[11px] text-[var(--faint)] text-center py-8">No tasks</div>
+                  : cards.map(c => (
+                      <TaskCard key={c.id} task={c}
+                        onSelect={t => { setSelected(t); setHighlighted(null); }}
+                        onMove={handleMove}
+                        highlighted={highlighted === c.id}/>
+                    ))
+                }
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {selected && (
+        <TaskModal task={selected} onClose={() => setSelected(null)} onMove={async (id, col) => {
+          await handleMove(id, col);
+          setSelected(p => ({...p, column:col}));
+        }}/>
+      )}
+    </div>
+  );
+}
+
+/* ════════════════════════════════════════════
+   DOCS TAB
+════════════════════════════════════════════ */
+const DOC_AGENTS = ["BA","SA","DS","DEV","PM","SPEC"];
+
+function DocsTab({ docs }) {
+  const [open,    setOpen]    = useState({ BA:true, SA:false, DS:false, DEV:false, PM:false, SPEC:false });
+  const [search,  setSearch]  = useState("");
+  const [selFile, setSelFile] = useState(null);
+  const [content, setContent] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const loadFile = async (agentCode, file) => {
+    const path = `.ai-agents/docs/${agentCode}/${file}`;
+    setSelFile({ agentCode, file, path });
+    setContent("");
+    setLoading(true);
+    try {
+      const r = await apiFetch("/api/doc?path=" + encodeURIComponent(path));
+      const text = await r.text();
+      setContent(text);
+    } catch { setContent("__error__"); }
+    finally { setLoading(false); }
+  };
+
+  const filteredDocs = (code) => {
+    const list = docs[code] || [];
+    if (!search.trim()) return list;
+    return list.filter(f => f.toLowerCase().includes(search.toLowerCase()));
+  };
+
+  const download = () => {
+    if (!selFile || !content) return;
+    const blob = new Blob([content], { type:"text/markdown" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = selFile.file;
+    a.click();
+  };
+
+  // Parse frontmatter
+  const parseFrontmatter = (raw) => {
+    if (!raw.startsWith("---")) return { fm: null, body: raw };
+    const end = raw.indexOf("---", 3);
+    if (end === -1) return { fm: null, body: raw };
+    return { fm: raw.slice(3, end).trim(), body: raw.slice(end+3).trim() };
+  };
+
+  const { fm, body } = parseFrontmatter(content);
+
+  return (
+    <div className="flex" style={{ height:"calc(100vh - 104px)" }}>
+      {/* Sidebar */}
+      <div className="w-[240px] shrink-0 border-r border-[var(--border)] flex flex-col overflow-hidden">
+        <div className="px-3 py-3 border-b border-[var(--border)]">
+          <input value={search} onChange={e => setSearch(e.target.value)}
+            placeholder="Search docs…"
+            className="w-full bg-[var(--surface-2)] border border-[var(--border)] rounded-[6px] px-3 py-[6px] text-[12px] text-[var(--text)] placeholder:text-[var(--muted)] outline-none focus:border-[var(--accent)]"/>
+        </div>
+        <div className="flex-1 overflow-y-auto py-2">
+          {DOC_AGENTS.map(code => {
+            const files = filteredDocs(code);
+            const isOpen = open[code];
+            return (
+              <div key={code}>
+                <button onClick={() => setOpen(p => ({...p, [code]:!p[code]}))}
+                  className="flex items-center gap-2 w-full px-3 py-[7px] hover:bg-[var(--surface-2)] transition-colors text-left">
+                  <ChevIco open={isOpen}/>
+                  <Badge code={code} size={20} radius={4}/>
+                  <span className="text-[12px] font-semibold text-[var(--text-soft)] flex-1">{code}</span>
+                  <span className="text-[10px] text-[var(--muted)]">{(docs[code]||[]).length}</span>
+                </button>
+                {isOpen && files.map(file => (
+                  <button key={file}
+                    onClick={() => loadFile(code, file)}
+                    className="flex items-center gap-2 w-full pl-9 pr-3 py-[6px] transition-colors text-left"
+                    style={{ background: selFile?.file === file && selFile?.agentCode === code ? "var(--surface-2)" : "transparent",
+                             color: selFile?.file === file && selFile?.agentCode === code ? "var(--accent)" : "var(--text-soft)" }}>
+                    <DocIco/>
+                    <span className="text-[11.5px] truncate">{file}</span>
+                  </button>
+                ))}
+                {isOpen && files.length === 0 && (
+                  <div className="pl-9 py-[5px] text-[11px] text-[var(--faint)]">{search ? "No match" : "No docs yet"}</div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Content pane */}
+      <div className="flex-1 min-w-0 flex flex-col overflow-hidden">
+        {!selFile && (
+          <div className="flex-1 flex items-center justify-center text-[var(--faint)] text-[13px]">
+            Select a document from the sidebar
+          </div>
+        )}
+        {selFile && (
+          <>
+            <div className="flex items-center gap-3 px-6 py-3 border-b border-[var(--border)] shrink-0">
+              <Badge code={selFile.agentCode} size={22} radius={5}/>
+              <span className="text-[13px] font-semibold text-[var(--text)] flex-1 truncate">{selFile.file}</span>
+              <button onClick={download}
+                className="inline-flex items-center gap-[6px] text-[11px] font-medium px-3 py-[5px] rounded-[6px] border transition-colors"
+                style={{ background:"var(--surface-2)", borderColor:"var(--border)", color:"var(--text-soft)" }}
+                onMouseEnter={e=>e.currentTarget.style.borderColor="var(--border-bright)"}
+                onMouseLeave={e=>e.currentTarget.style.borderColor="var(--border)"}>
+                <DlIco/>Download
+              </button>
+            </div>
+            <div className="flex-1 min-h-0 overflow-y-auto px-7 py-5">
+              {loading && <div className="text-[12px] text-[var(--muted)] text-center py-8">Loading…</div>}
+              {!loading && content === "__error__" && <div className="text-[12px] text-[var(--danger)]">Failed to load document.</div>}
+              {!loading && content && content !== "__error__" && (
+                <>
+                  {fm && (
+                    <div className="mb-5 bg-[var(--surface-2)] border border-[var(--border)] rounded-[8px] px-4 py-3 font-mono text-[11px] text-[var(--muted)] whitespace-pre-wrap leading-relaxed">
+                      <div className="text-[9.5px] uppercase tracking-[.1em] text-[var(--faint)] mb-2 font-sans font-medium">Frontmatter</div>
+                      {fm}
+                    </div>
+                  )}
+                  <div className="md" dangerouslySetInnerHTML={{ __html: renderMd(body||content) }}/>
+                </>
+              )}
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* ════════════════════════════════════════════
+   TIMELINE TAB
+════════════════════════════════════════════ */
+function phaseCircleStyle(state) {
+  if (state === "done")   return { background:"var(--accent)", borderColor:"var(--accent)", color:"#0e1218" };
+  if (state === "active") return { background:"var(--accent-soft)", borderColor:"var(--accent)", color:"var(--accent)" };
+  return { background:"var(--surface-2)", borderColor:"var(--border)", color:"var(--muted)" };
+}
+const STATE_COLOR = { done:"var(--green)", active:"var(--amber)", upcoming:"var(--faint)" };
+const STATE_LABEL = { done:"Done", active:"Active", upcoming:"Upcoming" };
+const DOT_CFG = {
+  done:     { bg:"var(--accent)",      border:"var(--accent)",        glow:false },
+  active:   { bg:"var(--accent-soft)", border:"var(--accent)",        glow:true  },
+  upcoming: { bg:"var(--bg)",          border:"var(--border-bright)", glow:false },
+};
+const MS_PILL = {
+  done:     { cls:"bg-[rgba(76,175,120,0.12)] text-[var(--green)] border-[rgba(76,175,120,0.3)]",  label:"Done" },
+  active:   { cls:"bg-[rgba(240,180,41,0.12)] text-[var(--amber)] border-[rgba(240,180,41,0.3)]",  label:"Active" },
+  upcoming: { cls:"bg-[var(--surface-2)] text-[var(--muted)] border-[var(--border)]",              label:"Upcoming" },
+};
+function MsPill({ status }) {
+  const p = MS_PILL[status]||MS_PILL.upcoming;
+  return <span className={"inline-block font-medium uppercase tracking-[.08em] text-[9.5px] px-[8px] py-[3px] rounded-[4px] border whitespace-nowrap "+p.cls}>{p.label}</span>;
+}
+
+function PhaseStrip({ phases }) {
+  return (
+    <div className="bg-[var(--surface)] border border-[var(--border)] rounded-[10px] overflow-hidden">
+      <div className="grid grid-cols-4">
+        {phases.map((p, i) => {
+          const cs = phaseCircleStyle(p.state);
+          const isActive = p.state==="active", isDone = p.state==="done";
+          return (
+            <div key={p.num} className={"flex flex-col gap-[11px] px-[22px] py-[20px]"+(i>0?" border-l border-[var(--border)]":"")}>
+              <div className="flex items-center gap-[11px]">
+                <span className="w-[30px] h-[30px] rounded-full border-2 inline-flex items-center justify-center text-[11px] font-bold shrink-0"
+                  style={{ ...cs, animation: isActive?"phaseGlow 2.2s ease-in-out infinite":"none" }}>
+                  {isDone ? <CheckIco/> : p.num}
+                </span>
+                <div className="flex flex-col gap-[1px]">
+                  <span className="text-[9.5px] text-[var(--muted)] tracking-[.09em] uppercase leading-none">Phase {p.num}</span>
+                  <span className="text-[14px] font-bold text-[var(--text)] leading-tight">{p.label}</span>
+                </div>
+                <div className="flex-1"/>
+                {p.pct > 0 && <span className="text-[11px] font-medium" style={{ color: isDone?"var(--green)":"var(--accent)" }}>{p.pct}%</span>}
+              </div>
+              <div className="rounded-full bg-[var(--surface-2)] border border-[var(--border)] overflow-hidden" style={{ height:4 }}>
+                <div className="h-full rounded-full transition-all" style={{ width:p.pct+"%", background: p.state==="upcoming"?"var(--faint)":"var(--accent)" }}/>
+              </div>
+              {p.dates && <div className="text-[10.5px] text-[var(--muted)]" style={{ fontFamily:"var(--mono)" }}>{p.dates}</div>}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function MilestoneRow({ milestone, isFirst, isLast }) {
+  const dot = DOT_CFG[milestone.status]||DOT_CFG.upcoming;
+  return (
+    <div className="grid border-t border-[var(--border)] hover:bg-[var(--surface-2)] transition-colors cursor-default"
+      style={{ gridTemplateColumns:"120px 28px 1fr auto auto", columnGap:16, alignItems:"stretch" }}>
+      <div className="flex items-center pl-5 py-[13px]">
+        <span className="text-[11px] text-[var(--muted)] tabular-nums" style={{ fontFamily:"var(--mono)" }}>{milestone.date}</span>
+      </div>
+      <div className="relative flex items-center justify-center">
+        {!isFirst && <div className="absolute left-1/2 w-px bg-[var(--border)]" style={{ top:0, bottom:"50%", transform:"translateX(-0.5px)" }}/>}
+        {!isLast  && <div className="absolute left-1/2 w-px bg-[var(--border)]" style={{ top:"50%", bottom:0, transform:"translateX(-0.5px)" }}/>}
+        <div className="w-3 h-3 rounded-full border-2 relative shrink-0"
+          style={{ zIndex:1, background:dot.bg, borderColor:dot.border, animation:dot.glow?"dotGlow 2s ease-in-out infinite":"none" }}/>
+      </div>
+      <div className="flex items-center py-[13px]">
+        <span className="text-[13px] font-semibold text-[var(--text)] leading-snug">{milestone.title}</span>
+      </div>
+      <div className="flex items-center py-[13px]">
+        {milestone.agent && <Badge code={milestone.agent} size={24} radius={5}/>}
+      </div>
+      <div className="flex items-center py-[13px] pr-5">
+        <MsPill status={milestone.status}/>
+      </div>
+    </div>
+  );
+}
+
+function TimelineTab({ data }) {
+  if (!data) return <div className="flex items-center justify-center h-full text-[var(--faint)] text-[13px]">Loading…</div>;
+  const { phases=[], milestones=[] } = data;
+  return (
+    <div className="px-6 py-6 max-w-[1100px] mx-auto flex flex-col gap-[14px] overflow-y-auto" style={{ animation:"fadeUp .2s ease-out", maxHeight:"calc(100vh - 104px)" }}>
+      <PhaseStrip phases={phases}/>
+      <div className="bg-[var(--surface)] border border-[var(--border)] rounded-[10px] overflow-hidden">
+        {phases.map((phase, phaseIdx) => {
+          const group = milestones.filter(m => String(m.phase)===String(phase.num));
+          const doneCount = group.filter(m => m.status==="done").length;
+          const isDone = phase.state==="done", isActive = phase.state==="active";
+          const cs = phaseCircleStyle(phase.state);
+          return (
+            <div key={phase.num}>
+              <div className={"flex items-center gap-[10px] px-5 py-[9px] select-none"+(phaseIdx>0?" border-t-2 border-[var(--border)]":"")}
+                style={{ background:"var(--surface-2)" }}>
+                <span className="w-[20px] h-[20px] rounded-full border-2 inline-flex items-center justify-center font-bold shrink-0"
+                  style={{ ...cs, fontSize:8, animation: isActive?"phaseGlow 2.2s ease-in-out infinite":"none" }}>
+                  {isDone ? <CheckIco/> : phase.num}
+                </span>
+                <span className="text-[12px] font-bold text-[var(--text)]">Phase {phase.num} — {phase.label}</span>
+                <span className="text-[10.5px] text-[var(--muted)]">· {doneCount} of {group.length} milestones</span>
+                <div className="flex-1"/>
+                <span className="text-[10px] font-semibold uppercase tracking-[.08em]" style={{ color:STATE_COLOR[phase.state] }}>{STATE_LABEL[phase.state]}</span>
+              </div>
+              {group.map((m, mIdx) => (
+                <MilestoneRow key={mIdx} milestone={m} isFirst={mIdx===0} isLast={mIdx===group.length-1}/>
+              ))}
+            </div>
+          );
+        })}
+        {milestones.length === 0 && (
+          <div className="text-[12px] text-[var(--faint)] text-center py-10">No milestones yet</div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* ════════════════════════════════════════════
+   TERMINAL TAB (placeholder)
+════════════════════════════════════════════ */
+function TerminalTab() {
+  return (
+    <div className="px-6 py-6" style={{ height:"calc(100vh - 104px)" }}>
+      <div className="w-full h-full rounded-[10px] border border-[var(--border)] overflow-hidden flex flex-col"
+        style={{ background:"var(--surface)" }}>
+        {/* header bar */}
+        <div className="flex items-center gap-[10px] px-4 border-b shrink-0"
+          style={{ height:40, background:"var(--surface)", borderColor:"var(--border)" }}>
+          <div className="flex items-center gap-[5px] mr-1">
+            <span className="w-[11px] h-[11px] rounded-full opacity-60" style={{ background:"var(--danger)" }}/>
+            <span className="w-[11px] h-[11px] rounded-full opacity-60" style={{ background:"var(--amber)" }}/>
+            <span className="w-[11px] h-[11px] rounded-full opacity-60" style={{ background:"var(--green)" }}/>
+          </div>
+          <span className="text-[13px] font-bold text-[var(--text)] select-none">Terminal</span>
+        </div>
+        {/* body */}
+        <div className="flex-1 min-h-0 flex flex-col items-center justify-center gap-6" style={{ background:"#0e1218" }}>
+          <div className="flex flex-col items-center gap-3">
+            <div className="w-16 h-16 rounded-[16px] bg-[var(--accent)] inline-flex items-center justify-center font-extrabold text-[28px] text-[#1a1f26] select-none tracking-[-0.02em]">NA</div>
+            <span className="text-[18px] font-bold text-[var(--text)] tracking-[-0.01em]">Neo Agents AI</span>
+          </div>
+          <div className="flex items-center gap-2 text-[13px]" style={{ color:"var(--muted)", fontFamily:"var(--mono)" }}>
+            <span className="term-cursor"/>
+            <span>Agent terminal coming in v2</span>
+          </div>
+          <div className="text-[11px] text-[var(--faint)] text-center" style={{ maxWidth:380, lineHeight:1.7 }}>
+            The interactive terminal will let you run agents directly from the dashboard,<br/>
+            see live output, and respond to agent questions in real time.
+          </div>
+        </div>
+        {/* mock input */}
+        <div className="flex items-center gap-3 px-5 border-t shrink-0"
+          style={{ height:48, background:"var(--surface-2)", borderColor:"var(--border)" }}>
+          <span style={{ fontFamily:"var(--mono)", fontSize:14, color:"var(--accent)", lineHeight:1, userSelect:"none" }}>›</span>
+          <span className="text-[13px] text-[var(--muted)] flex-1" style={{ fontFamily:"var(--mono)" }}>Coming in v2…</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ════════════════════════════════════════════
+   APP SHELL
+════════════════════════════════════════════ */
+const SHELL_TABS = [
+  { key:"overview", label:"Overview", Ico:ListIco   },
+  { key:"board",    label:"Board",    Ico:BoardIco  },
+  { key:"docs",     label:"Docs",     Ico:DocIco    },
+  { key:"timeline", label:"Timeline", Ico:TimeIco   },
+  { key:"terminal", label:"Terminal", Ico:TermIco   },
+];
+
+function App() {
+  const [activeTab,   setActiveTab]   = useState("overview");
+  const [config,      setConfig]      = useState(null);
+  const [tasks,       setTasks]       = useState([]);
+  const [docs,        setDocs]        = useState({});
+  const [timeline,    setTimeline]    = useState(null);
+  const [toast,       setToast]       = useState(null);
+  const [highlighted, setHighlighted] = useState(null);
+  const pollRef = useRef(null);
+
+  const fetchAll = useCallback(async () => {
+    try {
+      const [cfgR, tasksR, docsR] = await Promise.all([
+        apiFetch("/api/config"),
+        apiFetch("/api/tasks"),
+        apiFetch("/api/docs"),
+      ]);
+      if (cfgR.ok)   { const j = await cfgR.json();   setConfig(j); }
+      if (tasksR.ok) { const j = await tasksR.json(); setTasks(Array.isArray(j.tasks)?j.tasks:(Array.isArray(j)?j:[])); }
+      if (docsR.ok)  { const j = await docsR.json();  setDocs(j); }
+    } catch {}
+  }, []);
+
+  const fetchTimeline = useCallback(async () => {
+    try {
+      const r = await apiFetch("/api/timeline");
+      if (r.ok) { const j = await r.json(); setTimeline(j); }
+    } catch {}
+  }, []);
+
+  useEffect(() => {
+    fetchAll();
+    fetchTimeline();
+    pollRef.current = setInterval(() => { fetchAll(); fetchTimeline(); }, 5000);
+    return () => clearInterval(pollRef.current);
+  }, [fetchAll, fetchTimeline]);
+
+  const handleMove = async (id, col) => {
+    const task = tasks.find(t => t.id === id);
+    setTasks(prev => prev.map(t => t.id===id ? {...t, column:col} : t));
+    if (task) setToast(`${task.title.slice(0,30)}… → ${col}`);
+    await apiFetch("/api/task/move", {
+      method: "POST",
+      body: JSON.stringify({ id, column: col }),
+    });
+    fetchAll();
+    fetchTimeline();
+  };
+
+  const handleNavigateBoard = (task) => {
+    setHighlighted(task.id);
+    setActiveTab("board");
+    setTimeout(() => setHighlighted(null), 3000);
+  };
+
+  const inProgress = tasks.filter(t => t.column === "In Progress").length;
+
+  const projectName = config?.project_name || config?.name || "Neo Agents AI";
+  const projectType = config?.type || config?.project_type || "";
+  const version     = config?.version || "v1";
+
+  return (
+    <div className="bg-[var(--bg)]" style={{ height:"100vh", fontFamily:"var(--sans)", overflow:"hidden" }}>
+      {/* Header */}
+      <header className="fixed top-0 left-0 right-0 z-40 flex items-center gap-4 px-5 bg-[var(--surface)] border-b border-[var(--border)]"
+        style={{ height:HEADER_H }}>
+        <div className="flex items-center gap-3 shrink-0">
+          <div className="w-8 h-8 rounded-[8px] bg-[var(--accent)] inline-flex items-center justify-center font-extrabold text-[13px] text-[#1a1f26] select-none tracking-[-0.02em]">NA</div>
+          <span className="font-bold text-[15px] text-[var(--text)] tracking-[-0.01em]">Neo Agents AI</span>
+        </div>
+        <div className="flex-1 flex justify-center items-center gap-2">
+          <div className="inline-flex items-center gap-2 bg-[var(--surface-2)] border border-[var(--border)] rounded-[8px] px-3 py-[6px] text-[12px]">
+            <span className="text-[var(--muted)] text-[10.5px]">project</span>
+            <span className="text-[var(--accent)]">›</span>
+            <span className="font-medium text-[var(--text)]">{projectName}</span>
+          </div>
+          {projectType && (
+            <div className="inline-flex items-center gap-[6px] bg-[var(--surface-2)] border border-[var(--border)] rounded-[6px] px-[10px] py-[5px] text-[10.5px] text-[var(--muted)]">
+              <span className="w-[6px] h-[6px] rounded-full bg-[var(--accent)]"/>{projectType}
+            </div>
+          )}
+        </div>
+        <div className="flex items-center gap-3 shrink-0">
+          <span className="text-[11px] text-[var(--muted)]" style={{ fontFamily:"var(--mono)" }}>{version}</span>
+          <div className="inline-flex items-center gap-[6px] text-[11px] text-[var(--muted)]">
+            <span className="w-[6px] h-[6px] rounded-full" style={{ background: inProgress>0?"var(--amber)":"var(--faint)" }}/>
+            <span>{inProgress} active</span>
+          </div>
+        </div>
+      </header>
+
+      {/* Tab bar */}
+      <div className="fixed left-0 right-0 z-40 flex items-stretch px-5 bg-[var(--surface)] border-b border-[var(--border)]"
+        style={{ top:HEADER_H, height:TABS_H }}>
+        {SHELL_TABS.map(t => {
+          const on = t.key === activeTab;
+          return (
+            <button key={t.key} onClick={() => setActiveTab(t.key)}
+              className={"inline-flex items-center gap-2 px-[18px] text-[12px] tracking-[.025em] uppercase font-medium border-b-2 transition-colors "+(on?"text-[var(--accent)] border-[var(--accent)]":"text-[var(--muted)] border-transparent hover:text-[var(--text-soft)]")}>
+              <t.Ico/>
+              {t.label}
+              {t.key==="board" && inProgress > 0 && (
+                <span className={"text-[10px] rounded-full px-[7px] py-px border "+(on?"text-[var(--accent)] border-[rgba(118,171,174,.3)] bg-[var(--accent-soft)]":"text-[var(--muted)] border-[var(--border)] bg-[var(--surface-2)]")}>{inProgress}</span>
+              )}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Content */}
+      <main className="overflow-hidden" style={{ paddingTop:OFFSET, height:"100vh" }}>
+        {activeTab === "overview" && (
+          <div className="overflow-y-auto" style={{ height:"calc(100vh - 104px)" }}>
+            <OverviewTab tasks={tasks} docs={docs} onSelectTask={() => {}} onNavigateBoard={handleNavigateBoard}/>
+          </div>
+        )}
+        {activeTab === "board" && (
+          <BoardTab tasks={tasks} onMove={handleMove} onTaskUpdate={fetchAll}
+            highlighted={highlighted} setHighlighted={setHighlighted}/>
+        )}
+        {activeTab === "docs" && <DocsTab docs={docs}/>}
+        {activeTab === "timeline" && <TimelineTab data={timeline}/>}
+        {activeTab === "terminal" && <TerminalTab/>}
+      </main>
+
+      {toast && <Toast key={toast} msg={toast} onDone={() => setToast(null)}/>}
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script>
 </body>
 </html>

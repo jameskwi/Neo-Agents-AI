@@ -133,6 +133,119 @@ const routes = {
     }
   },
 
+  // GET /api/timeline
+  "/api/timeline": (req, res, query) => {
+    if (!checkToken(query, res)) return;
+    const data  = readJSON(TASKS_FILE);
+    const tasks = (data && data.tasks) ? data.tasks : [];
+    const total = tasks.length;
+
+    const PHASE_DEFS = [
+      { num: "1", label: "Build v1",  column: "Backlog"     },
+      { num: "2", label: "Test",      column: "In Progress" },
+      { num: "3", label: "v2 Agents", column: "Review"      },
+      { num: "4", label: "Scale",     column: "Done"        },
+    ];
+
+    const colCounts = {};
+    for (const def of PHASE_DEFS) colCounts[def.column] = 0;
+    for (const t of tasks) {
+      if (t.column in colCounts) colCounts[t.column]++;
+    }
+
+    const phases = PHASE_DEFS.map((def, idx) => {
+      const count = colCounts[def.column];
+      const pct   = total > 0 ? Math.round((count / total) * 100) : 0;
+
+      // "done" if this column is empty but later ones have tasks (work moved past)
+      // "active" if this column currently has tasks
+      // "upcoming" if this column is empty and all later columns are too
+      const laterHasTasks = PHASE_DEFS.slice(idx + 1).some(d => colCounts[d.column] > 0);
+      const state = count > 0 ? "active" : (laterHasTasks ? "done" : "upcoming");
+
+      // derive a display date from the most recently updated task in this column
+      const colTasks = tasks.filter(t => t.column === def.column && t.updated_at);
+      let dates = "";
+      if (colTasks.length > 0) {
+        const latest = new Date(Math.max(...colTasks.map(t => new Date(t.updated_at).getTime())));
+        dates = latest.toLocaleDateString("en-US", { month: "short", year: "numeric" });
+      }
+
+      return { num: def.num, label: def.label, state, dates, pct };
+    });
+
+    const COLUMN_STATUS = {
+      "Backlog":     "upcoming",
+      "In Progress": "active",
+      "Review":      "active",
+      "Done":        "done",
+    };
+    const COLUMN_PHASE = { "Backlog": 1, "In Progress": 2, "Review": 3, "Done": 4 };
+
+    const milestones = tasks.map(t => ({
+      id:     t.id,
+      title:  t.title,
+      phase:  COLUMN_PHASE[t.column] ?? 1,
+      date:   t.updated_at
+        ? new Date(t.updated_at).toLocaleDateString("en-US", { month: "short", year: "numeric" })
+        : (t.date ?? ""),
+      agent:  t.agent ?? "",
+      status: COLUMN_STATUS[t.column] ?? "upcoming",
+    }));
+
+    send(res, 200, { phases, milestones });
+  },
+
+  // POST /api/task/create  { title, column? }
+  "/api/task/create": (req, res, query) => {
+    if (!checkToken(query, res)) return;
+    let body = "";
+    req.on("data", d => body += d);
+    req.on("end", () => {
+      try {
+        const { title, column } = JSON.parse(body);
+        if (!title || typeof title !== "string" || !title.trim()) {
+          return send(res, 400, { error: "title is required" });
+        }
+        const validColumns = ["Backlog", "In Progress", "Review", "Done"];
+        const targetColumn = validColumns.includes(column) ? column : "Backlog";
+
+        const slug = title.trim().toLowerCase()
+          .replace(/[^a-z0-9]+/g, "-")
+          .replace(/^-+|-+$/g, "");
+        const today = new Date();
+        const yyyymmdd = today.getFullYear().toString() +
+          String(today.getMonth() + 1).padStart(2, "0") +
+          String(today.getDate()).padStart(2, "0");
+        const id = `${slug}-${yyyymmdd}`;
+
+        const newTask = {
+          id,
+          title: title.trim(),
+          status: "🔲 not started",
+          column: targetColumn,
+          agent: "",
+          created_at: today.toISOString(),
+          updated_at: today.toISOString(),
+          steps: {
+            ba:  "🔲 not started",
+            sa:  "🔲 not started",
+            ds:  "🔲 not started",
+            dev: "🔲 not started",
+          },
+          docs: { ba_doc: "", sa_doc: "", ds_doc: "", dev_doc: "", spec_doc: "" },
+        };
+
+        const data = readJSON(TASKS_FILE) || { tasks: [] };
+        data.tasks.push(newTask);
+        fs.writeFileSync(TASKS_FILE, JSON.stringify(data, null, 2), "utf8");
+        send(res, 200, { ok: true, task: newTask });
+      } catch (e) {
+        send(res, 500, { error: e.message });
+      }
+    });
+  },
+
   // POST /api/task/move  { id, column, token }
   "/api/task/move": (req, res, query) => {
     if (!checkToken(query, res)) return;
