@@ -1,23 +1,20 @@
 {
-  "id": "jameskwi/neo-agents-ai",
-  "name": "Neo Agents AI",
-  "tagline": "Your AI crew — BA, SA, Designer, Engineer, PM — inside any project.",
-  "description": "Drop Neo Agents AI into any project and get an interactive AI crew that fills specialist roles. Agents interview you before producing output — no assumptions, no generic templates. Includes a live dashboard with task board, doc viewer, and timeline. Works on any stack: Next.js, React, Python, Flutter, and more.",
-  "category": "productivity",
-  "tags": ["agents", "ba", "architecture", "requirements", "dashboard", "planning"],
-  "author": {
+  "name": "jameskwi-neo-agents-ai",
+  "owner": {
     "name": "jameskwi",
-    "github": "https://github.com/jameskwi"
+    "url": "https://github.com/jameskwi"
   },
-  "repository": "https://github.com/jameskwi/Neo-Agents-AI",
-  "install_command": "/plugin marketplace add jameskwi/neo-agents-ai",
-  "quick_start": [
-    "/plugin install neo-agents-ai",
-    "/neo:setup",
-    "/neo:ba \"your feature idea here\"",
-    "/neo:dashboard"
-  ],
-  "screenshots": [],
-  "version": "1.4.0",
-  "license": "MIT"
+  "plugins": [
+    {
+      "id": "neo-agents-ai",
+      "name": "Neo Agents AI",
+      "version": "1.4.0",
+      "description": "An AI crew embedded in your project — BA, SA, Designer, Engineer, and PM agents that interview you before producing output. Works on any project, any stack, any size.",
+      "tagline": "Your AI crew — BA, SA, Designer, Engineer, PM — inside any project.",
+      "category": "productivity",
+      "tags": ["agents", "ba", "architecture", "requirements", "dashboard", "planning"],
+      "repository": "https://github.com/jameskwi/Neo-Agents-AI",
+      "license": "MIT"
+    }
+  ]
 }
