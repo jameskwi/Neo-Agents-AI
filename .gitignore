@@ -20,6 +20,7 @@ Thumbs.db
 dist/
 .cache/
 !packages/dashboard/dist/
+!packages/core/dist/
 
 # Local env / secrets
 .env
