@@ -1,23 +1,12 @@
 {
-  "name": "neo",
-  "displayName": "Neo Agents AI",
+  "name": "neo-agents-ai",
   "description": "An AI crew embedded in your project — BA, SA, Designer, Engineer, and PM agents that interview you before producing output. Works on any project, any stack, any size.",
-  "version": "1.4.1",
+  "version": "1.4.0",
   "author": {
     "name": "jameskwi"
   },
   "homepage": "https://github.com/jameskwi/Neo-Agents-AI",
   "repository": "https://github.com/jameskwi/Neo-Agents-AI",
   "license": "MIT",
-  "keywords": [
-    "agents", "ba", "architecture", "requirements", "dashboard", "planning"
-  ],
-  "commands": "./skills/",
-  "agents": [
-    "./agents/business-analyst.md",
-    "./agents/solution-architect.md",
-    "./agents/designer.md",
-    "./agents/engineer.md",
-    "./agents/planner.md"
-  ]
+  "keywords": ["agents", "ba", "architecture", "requirements", "dashboard", "planning"]
 }

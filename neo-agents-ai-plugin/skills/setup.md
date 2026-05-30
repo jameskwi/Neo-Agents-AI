@@ -1,7 +1,19 @@
 # /neo:setup — Neo Agents AI Setup
 
 ## What this does
-Initializes Neo Agents AI in the current project. Auto-detects stack, creates config, and builds the full docs folder structure.
+Initializes Neo Agents AI in the current project. Auto-detects stack, creates config, and builds the full docs folder structure. All operations run via `packages/core` — no Python required.
+
+---
+
+## Pre-flight Check
+
+Before any other step, verify `packages/core` is built:
+
+```bash
+[ -f packages/core/dist/cli.js ] || (cd packages/core && npm run build)
+```
+
+If the build fails → stop and show the npm error output.
 
 ---
 
@@ -9,268 +21,121 @@ Initializes Neo Agents AI in the current project. Auto-detects stack, creates co
 
 ### 1. Check if already configured
 
-Run this Python3 script:
-
-```python
-import os, json, sys
-
-config_path = os.path.join(os.getcwd(), '.ai-agents', 'config.json')
-
-if os.path.exists(config_path):
-    with open(config_path) as f:
-        cfg = json.load(f)
-    print(f"__EXISTS__|{cfg.get('project_name','unknown')}|{cfg.get('project_type','unknown')}")
-else:
-    print("__NEW__")
+```bash
+[ -f .ai-agents/config.json ] && echo "__EXISTS__" || echo "__NEW__"
 ```
 
-- If output starts with `__EXISTS__` → tell the user:
+- `__EXISTS__` → tell the user:
   > "Neo Agents is already configured in this project.
-  > Detected: {project_name} ({project_type})
   > Update config? [y/n]"
   - `n` → stop
-  - `y` → backup existing config by renaming to `config.backup.json`, then continue
+  - `y` → back up existing config:
+    ```bash
+    cp .ai-agents/config.json .ai-agents/config.backup.json
+    ```
+    Set `FORCE_FLAG=--force`, then continue
 
-- If output is `__NEW__` → continue
+- `__NEW__` → continue (no `FORCE_FLAG`)
 
 ---
 
 ### 2. Auto-detect project stack + metadata
 
-Run this Python3 script:
-
-```python
-import os, json, sys, secrets, string
-from datetime import datetime, timezone
-
-cwd = os.getcwd()
-
-def read_json(path):
-    try:
-        with open(path) as f:
-            return json.load(f)
-    except:
-        return {}
-
-def read_text(path):
-    try:
-        with open(path) as f:
-            return f.read()
-    except:
-        return ""
-
-# ── Stack detection ────────────────────────────────────────────
-stack = "generic"
-language = "unknown"
-package_manager = None
-project_name = os.path.basename(cwd)
-
-pkg = read_json(os.path.join(cwd, "package.json"))
-requirements = read_text(os.path.join(cwd, "requirements.txt"))
-pyproject = read_text(os.path.join(cwd, "pyproject.toml"))
-
-if os.path.exists(os.path.join(cwd, "pubspec.yaml")):
-    stack = "Flutter"
-    language = "Dart"
-    import re
-    pubspec = read_text(os.path.join(cwd, "pubspec.yaml"))
-    m = re.search(r'^name:\s*(.+)', pubspec, re.MULTILINE)
-    if m:
-        project_name = m.group(1).strip()
-
-elif os.path.exists(os.path.join(cwd, "next.config.js")) or os.path.exists(os.path.join(cwd, "next.config.ts")):
-    stack = "Next.js"
-    if pkg.get("name"):
-        project_name = pkg["name"]
-
-elif pkg and "react" in pkg.get("dependencies", {}):
-    stack = "React"
-    if pkg.get("name"):
-        project_name = pkg["name"]
-
-elif pkg and "vue" in pkg.get("dependencies", {}):
-    stack = "Vue"
-    if pkg.get("name"):
-        project_name = pkg["name"]
-
-elif os.path.exists(os.path.join(cwd, "manage.py")):
-    stack = "Python/Django"
-    language = "Python"
-
-elif os.path.exists(os.path.join(cwd, "main.py")) and "fastapi" in requirements.lower():
-    stack = "Python/FastAPI"
-    language = "Python"
-
-elif os.path.exists(os.path.join(cwd, "requirements.txt")) or os.path.exists(os.path.join(cwd, "pyproject.toml")):
-    stack = "Python"
-    language = "Python"
-
-elif pkg:
-    stack = "Node.js"
-    if pkg.get("name"):
-        project_name = pkg["name"]
-
-elif os.path.exists(os.path.join(cwd, "index.html")) and not pkg:
-    stack = "Static HTML"
-    language = "HTML"
-
-# ── Language refinement ────────────────────────────────────────
-if language == "unknown":
-    if os.path.exists(os.path.join(cwd, "tsconfig.json")):
-        language = "TypeScript"
-    elif pkg:
-        language = "JavaScript"
-
-# ── Package manager ────────────────────────────────────────────
-if pkg:
-    if os.path.exists(os.path.join(cwd, "yarn.lock")):
-        package_manager = "yarn"
-    elif os.path.exists(os.path.join(cwd, "pnpm-lock.yaml")):
-        package_manager = "pnpm"
-    else:
-        package_manager = "npm"
-
-# ── Access token ───────────────────────────────────────────────
-alphabet = string.ascii_letters + string.digits
-access_token = ''.join(secrets.choice(alphabet) for _ in range(32))
-
-# ── Build config ───────────────────────────────────────────────
-config = {
-    "project_name": project_name,
-    "project_type": stack,
-    "language": language,
-    "package_manager": package_manager,
-    "project_root": cwd,
-    "docs_path": ".ai-agents/docs",
-    "tasks_file": ".ai-agents/tasks.json",
-    "dashboard_port": 7842,
-    "access_token": access_token,
-    "neo_agents_version": "1.0.0",
-    "created_at": datetime.now(timezone.utc).isoformat()
-}
-
-print(json.dumps(config))
+```bash
+node packages/core/dist/cli.js detect-stack --root=.
 ```
 
-Capture the JSON output as `DETECTED_CONFIG`.
+Parse the JSON output. Field mapping:
+
+| JSON field | Used as |
+|---|---|
+| `framework` | Stack display + `--type` for write-config |
+| `language` | `--language` for write-config |
+| `package_manager` | `--pm` for write-config |
+| `project_name` | `--name` for write-config |
 
 Show the user what was detected:
+
 ```
 Detected:
   Project:  {project_name}
-  Stack:    {project_type}
+  Stack:    {framework}
   Language: {language}
   Package:  {package_manager or "n/a"}
 
 Is this correct? [y/n]
 ```
 
-- `n` → ask user to correct any field manually, then update `DETECTED_CONFIG` before continuing
+- `n` → ask user to correct any field manually, update the detected values before continuing
 - `y` → continue
 
 ---
 
-### 3. Check Python3
+### 3. Write config
 
-Run: `python3 --version`
-
-If it fails → stop:
-> "Python3 is required by Neo Agents AI.
-> Install: https://python.org/downloads
-> Then re-run /neo:setup"
-
----
-
-### 4. Write config + folder structure
-
-Run this Python3 script (inject `DETECTED_CONFIG` as the config JSON):
-
-```python
-import os, json, sys
-
-cwd = os.getcwd()
-config = DETECTED_CONFIG  # injected from step 2
-
-# ── Paths ─────────────────────────────────────────────────────
-ai_root   = os.path.join(cwd, ".ai-agents")
-docs_root = os.path.join(ai_root, "docs")
-dirs = [
-    os.path.join(docs_root, "BA"),
-    os.path.join(docs_root, "SA"),
-    os.path.join(docs_root, "DS"),
-    os.path.join(docs_root, "DEV"),
-    os.path.join(docs_root, "PM"),
-    os.path.join(docs_root, "SPEC"),
-]
-
-# ── Create dirs ────────────────────────────────────────────────
-for d in dirs:
-    os.makedirs(d, exist_ok=True)
-
-# ── Write config.json ──────────────────────────────────────────
-config_path = os.path.join(ai_root, "config.json")
-with open(config_path, "w", encoding="utf-8") as f:
-    json.dump(config, f, indent=2)
-
-# ── Write tasks.json (only if missing) ────────────────────────
-tasks_path = os.path.join(ai_root, "tasks.json")
-if not os.path.exists(tasks_path):
-    with open(tasks_path, "w", encoding="utf-8") as f:
-        json.dump({"tasks": []}, f, indent=2)
-
-print("__OK__")
+```bash
+node packages/core/dist/cli.js write-config \
+  --root=. \
+  --name="{project_name}" \
+  --type="{framework}" \
+  --language="{language}" \
+  [--pm="{package_manager}" if not null] \
+  {FORCE_FLAG}
 ```
 
-If output is not `__OK__` → show the error and stop.
+Omit `--pm` if no package manager was detected (null / n/a).
 
----
-
-### 5. Handle .gitignore
-
-Run this Python3 script:
-
-```python
-import os
-
-cwd = os.getcwd()
-gitignore_path = os.path.join(cwd, ".gitignore")
-entry = ".ai-agents/"
-
-if os.path.exists(gitignore_path):
-    with open(gitignore_path, "r", encoding="utf-8") as f:
-        content = f.read()
-    lines = content.splitlines()
-    already_ignored = any(line.strip().rstrip("/") == entry.rstrip("/") or line.strip() == entry for line in lines)
-    if not already_ignored:
-        with open(gitignore_path, "a", encoding="utf-8") as f:
-            if content and not content.endswith("\n"):
-                f.write("\n")
-            f.write(f"\n# Neo Agents AI — local agent workspace\n{entry}\n")
-        print("__ADDED__")
-    else:
-        print("__ALREADY__")
-else:
-    print("__MISSING__")
+**Expected output:**
+```
+Config written: .ai-agents/config.json
 ```
 
-- `__ADDED__` → silently continue (entry was appended)
-- `__ALREADY__` → silently continue (already present)
-- `__MISSING__` → show this warning once and continue:
-  > ⚠️  No `.gitignore` found.
-  > The `.ai-agents/` folder contains local agent state and access tokens — it should not be committed.
-  > Add `.ai-agents/` to your `.gitignore` when you initialise a git repository for this project.
+If it exits with code 1 → stop and show the error output.
 
 ---
 
-### 6. Show setup summary
+### 4. Create docs folder structure
+
+```bash
+mkdir -p .ai-agents/docs/BA .ai-agents/docs/SA .ai-agents/docs/DS \
+         .ai-agents/docs/DEV .ai-agents/docs/PM .ai-agents/docs/SPEC
+```
+
+---
+
+### 5. Initialize tasks.json
+
+```bash
+[ -f .ai-agents/tasks.json ] || printf '{"tasks":[]}\n' > .ai-agents/tasks.json
+```
+
+---
+
+### 6. Handle .gitignore
+
+```bash
+if [ -f .gitignore ]; then
+  grep -qF '.ai-agents/' .gitignore \
+    || printf '\n# Neo Agents AI — local agent workspace\n.ai-agents/\n' >> .gitignore
+fi
+```
+
+If `.gitignore` does not exist → show this warning once and continue:
+> ⚠️  No `.gitignore` found.
+> The `.ai-agents/` folder contains local agent state and access tokens — it should not be committed.
+> Add `.ai-agents/` to your `.gitignore` when you initialise a git repository for this project.
+
+---
+
+### 7. Show setup summary
 
 ```
 ✅ Neo Agents AI is ready.
 
 Project:   {project_name}
-Stack:     {project_type} ({language})
+Stack:     {framework} ({language})
 Docs:      .ai-agents/docs/
-Dashboard: localhost:{dashboard_port}
+Dashboard: localhost:7842
 
 Next step: /neo:ba "describe your first feature"
 ```
@@ -281,11 +146,12 @@ Next step: /neo:ba "describe your first feature"
 
 | Error | Message |
 |---|---|
+| `packages/core/dist/cli.js` missing | Run `cd packages/core && npm run build`. Stop if build fails. |
+| `write-config` exits code 1 | Show CLI error output. Stop. |
 | Permission denied | "Cannot write to project directory. Check folder permissions." |
-| Python3 not found | Show install URL. Stop. |
 | Disk full | "Not enough disk space. Free up space and retry." |
 | User rejects detected config | Prompt field-by-field correction before continuing |
 
 ---
 
-*setup skill v1.2 — Neo Agents AI*
+*setup skill v1.4 — Neo Agents AI*
