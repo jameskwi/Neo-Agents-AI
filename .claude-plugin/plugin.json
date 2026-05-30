@@ -1,5 +1,5 @@
 {
-  "name": "neo-agents-ai",
+  "name": "neo",
   "description": "An AI crew embedded in your project — BA, SA, Designer, Engineer, and PM agents that interview you before producing output. Works on any project, any stack, any size.",
   "version": "1.4.0",
   "author": {
