@@ -3,6 +3,7 @@ import { detectStack } from './detect-stack';
 import { writeBrd } from './write-brd';
 import { writeSpec } from './write-spec';
 import { updateTasks } from './update-tasks';
+import { writeConfig } from './write-config';
 
 function parseArgs(argv: string[]): Record<string, string> {
   const result: Record<string, string> = {};
@@ -11,6 +12,8 @@ function parseArgs(argv: string[]): Record<string, string> {
       const eqIdx = arg.indexOf('=');
       if (eqIdx !== -1) {
         result[arg.slice(2, eqIdx)] = arg.slice(eqIdx + 1);
+      } else {
+        result[arg.slice(2)] = '';
       }
     }
   }
@@ -30,17 +33,17 @@ try {
     }
 
     case 'write-brd': {
-      const { root, slug, file } = flags as Record<string, string>;
-      if (!root || !slug || !file) throw new Error('--root, --slug, --file are required');
-      const content = fs.readFileSync(file, 'utf8');
+      const { root, slug, content: contentFlag } = flags as Record<string, string>;
+      if (!root || !slug || !contentFlag) throw new Error('--root, --slug, --content are required');
+      const content = fs.readFileSync(contentFlag, 'utf8');
       console.log(writeBrd(root, slug, content));
       break;
     }
 
     case 'write-spec': {
-      const { root, slug, file } = flags as Record<string, string>;
-      if (!root || !slug || !file) throw new Error('--root, --slug, --file are required');
-      const content = fs.readFileSync(file, 'utf8');
+      const { root, slug, content: contentFlag } = flags as Record<string, string>;
+      if (!root || !slug || !contentFlag) throw new Error('--root, --slug, --content are required');
+      const content = fs.readFileSync(contentFlag, 'utf8');
       console.log(JSON.stringify(writeSpec(root, slug, content), null, 2));
       break;
     }
@@ -58,9 +61,24 @@ try {
       break;
     }
 
+    case 'write-config': {
+      const { root, name, type, language } = flags;
+      if (!root || !name || !type || !language) throw new Error('--root, --name, --type, --language are required');
+      const result = writeConfig(root, {
+        name,
+        type,
+        language,
+        pm: flags['pm'] || undefined,
+        port: flags['port'] ? parseInt(flags['port'], 10) : 7842,
+        force: 'force' in flags,
+      });
+      console.log(result);
+      break;
+    }
+
     default:
       throw new Error(
-        `Unknown command: ${command ?? '(none)'}. Valid: detect-stack, write-brd, write-spec, update-tasks`
+        `Unknown command: ${command ?? '(none)'}. Valid: detect-stack, write-brd, write-spec, update-tasks, write-config`
       );
   }
 } catch (err) {

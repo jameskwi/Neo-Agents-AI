@@ -1,0 +1,25 @@
+{
+  "tasks": [
+    {
+      "id": "1780132175905-dashboard-integration-test",
+      "title": "Dashboard Integration Test",
+      "status": "Review",
+      "column": "Review",
+      "created_at": "2026-05-30T09:09:35.909Z",
+      "updated_at": "2026-05-30T09:11:53.545Z",
+      "steps": {
+        "ba": "✅",
+        "sa": "🔲",
+        "ds": "🔲",
+        "dev": "🔲"
+      },
+      "docs": {
+        "ba_doc": "",
+        "sa_doc": "",
+        "ds_doc": "",
+        "dev_doc": "",
+        "spec_doc": ""
+      }
+    }
+  ]
+}

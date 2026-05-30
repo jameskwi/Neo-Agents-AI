@@ -176,9 +176,9 @@ const routes = {
 
 /* ── Server ── */
 const server = http.createServer((req, res) => {
-  const parsed   = new URL(req.url, true);
+  const parsed   = new URL(req.url, `http://localhost:${PORT}`);
   const pathname = parsed.pathname;
-  const query    = parsed.query;
+  const query    = Object.fromEntries(parsed.searchParams);
 
   // Handle CORS preflight
   if (req.method === "OPTIONS") {

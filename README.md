@@ -19,7 +19,6 @@ The pipeline ends with a prompt you paste into Claude Code to build the feature.
 | Requirement | Version |
 |---|---|
 | [Claude Code](https://claude.ai/code) | 1.0.0+ |
-| [Python 3](https://python.org/downloads) | 3.8+ |
 | [Node.js](https://nodejs.org) | 16+ |
 
 ---
@@ -62,13 +61,13 @@ Opens at `http://localhost:7842` — live task board, all agent docs, markdown v
 | Agent | Command | What it does |
 |---|---|---|
 | **BA** — Business Analyst | `/neo:ba "idea"` | Interviews you → writes full BRD with user stories, process flows, edge cases |
-| **SA** — Solution Architect | `/neo:sa` | Reads BRD → writes SSD: API endpoints, data model, technical risks |
 | **Dashboard** | `/neo:dashboard` | Live board: task status, all agent docs, move tasks between columns |
 
 ### v2 — Coming Next
 
 | Agent | Command | What it does |
 |---|---|---|
+| **SA** — Solution Architect | `/neo:sa` | Reads BRD → writes SSD: API endpoints, data model, technical risks |
 | **DS** — Designer | `/neo:ds` | Reads BRD + SSD → writes a ready-to-run Claude Design prompt |
 | **DEV** — Engineer | `/neo:dev` | Reads full context → writes Implementation File for Claude Code |
 | **PM** — Project Manager | passive | Auto-tracks task board, sprint state, pipeline progress |
@@ -148,8 +147,22 @@ neo-agents-ai/
 ├── .claude-plugin/
 │   ├── plugin.json          ← plugin manifest
 │   └── marketplace.json     ← marketplace listing
+├── packages/
+│   ├── core/                ← file I/O engine (Node.js/TypeScript)
+│   │   ├── src/
+│   │   │   ├── write-brd.ts
+│   │   │   ├── write-spec.ts
+│   │   │   ├── update-tasks.ts
+│   │   │   ├── write-config.ts
+│   │   │   ├── detect-stack.ts
+│   │   │   └── cli.ts       ← entry point
+│   │   └── dist/            ← compiled output (cli.js)
+│   └── dashboard/
+│       ├── src/             ← React dashboard UI (Vite + TypeScript)
+│       ├── index.html
+│       └── server.js        ← local Node.js server
 ├── agents/
-│   ├── business-analyst.md  ← BA agent definition
+│   ├── business-analyst.md
 │   ├── solution-architect.md
 │   ├── designer.md
 │   ├── engineer.md
@@ -161,9 +174,6 @@ neo-agents-ai/
 │   ├── ds.md                ← /neo:ds
 │   ├── dev.md               ← /neo:dev
 │   └── dashboard.md         ← /neo:dashboard
-├── dashboard/
-│   ├── index.html           ← React dashboard UI
-│   └── server.js            ← local Node.js server
 ├── CLAUDE.md                ← global rules for all agents
 └── README.md
 ```
@@ -202,6 +212,9 @@ neo-agents-ai/
 
 ## FAQ
 
+**Does Neo Agents AI require Python?**
+No. All file I/O runs through `packages/core` (Node.js). Python3 is not required.
+
 **Does this work on an existing project?**
 Yes. `/neo:setup` reads your existing project — it never modifies your code.
 
@@ -212,7 +225,7 @@ Yes. All files are plain UTF-8 markdown and JSON. Recommended to commit.
 Falls back to `Generic` type. All agents work — questions just aren't stack-specific.
 
 **Does the dashboard need internet?**
-The server and data are fully local — no data leaves your machine. The dashboard UI loads React and fonts from CDN (unpkg.com, fonts.googleapis.com), so an internet connection is needed for the first load. CDN assets are browser-cached after that.
+No. Reads local files only. Binds to `127.0.0.1`.
 
 **Can I re-run setup on an existing project?**
 Yes. You'll be prompted: `Config exists. Update? [y/n]` — existing config is backed up before any change.
@@ -222,13 +235,12 @@ Yes. You'll be prompted: `Config exists. Update? [y/n]` — existing config is b
 ## Changelog
 
 ### v1.4.0 — May 2026
-- Access token validation on all `/api/*` dashboard routes (token read from `config.json`, passed in URL by `/neo:dashboard`)
-- Directory naming corrected: `SE` → `DEV`, `PL` → `PM` across all agents, skills, server, and dashboard
-- Root `.claude-plugin/plugin.json` now complete with all commands, agents, runtime, and dashboard blocks
-- `/neo:pm` skill stub added
-- Dynamic timeline: milestone status derived from actual doc presence rather than hardcoded dates
-- Dashboard CORS restricted from `*` to `localhost` only
-- `.gitignore` extended with `node_modules/`, logs, OS artifacts
+- `agents/business-analyst.md` v1.3: replaced inline Python scripts with `packages/core` CLI calls (`write-brd`, `write-spec`, `update-tasks`)
+- `skills/ba.md` v1.3: pre-flight now checks for `packages/core/dist/cli.js`, passes `CORE_CLI` to agent
+- `plugin.json`: `requires_python3` set to `false`, dashboard paths updated to `packages/dashboard/`
+- Python3 no longer required — all file I/O runs via Node.js `packages/core`
+- `skills/setup.md` v1.4: replaced all Python3 scripts with `packages/core` CLI (`detect-stack`, `write-config`) and bash; Python3 no longer required at any step
+- `packages/dashboard/server.cjs`: fixed invalid `new URL` base bug (line 179) that caused dashboard to crash when serving external projects
 
 ### v1.3.0 — May 2026
 - Dashboard v1: task board, doc viewer, timeline, task detail modal

@@ -1,8 +1,3 @@
----
-name: business-analyst
-description: Senior Business Analyst that interviews you with targeted questions before producing a full BRD. Use for requirements gathering, feature scoping, and writing business requirements documents.
----
-
 # Business Analyst Agent — Neo Agents AI
 
 ## Agent Identity
@@ -143,111 +138,78 @@ Before saving, verify every gate. If any fails — fix it, do not save incomplet
 
 ## Step 5 — File Saves
 
-Run the following Python3 scripts after all quality gates pass.
+After all quality gates pass, run these three commands using `packages/core`.
 
-### Script 1 — Save BRD file
+> **Prerequisite:** `packages/core` must be built. If `packages/core/dist/cli.js` does not exist, run:
+> ```bash
+> cd packages/core && npm run build
+> ```
 
-```python
-import os, datetime
+### Step 5a — Write BRD to temp file, then save via core
 
-slug = "{slug}"  # lowercase-hyphenated feature name
-date = datetime.date.today().strftime("%Y-%m-%d")
-brd_dir = ".ai-agents/docs/BA"
-brd_path = f"{brd_dir}/{date}-{slug}.md"
+First, write the completed BRD markdown to a temporary file:
 
-os.makedirs(brd_dir, exist_ok=True)
-
-brd_content = """{BRD_MARKDOWN}"""
-
-with open(brd_path, "w", encoding="utf-8") as f:
-    f.write(brd_content)
-
-print(f"BRD saved: {brd_path}")
+```bash
+cat > /tmp/neo-brd-{slug}.md << 'BRDEOF'
+{BRD_MARKDOWN}
+BRDEOF
 ```
 
-### Script 2 — Create or append SPEC file
+Then call the core CLI to save it to the correct location:
 
-```python
-import os
+```bash
+node packages/core/dist/cli.js write-brd \
+  --slug="{slug}" \
+  --content=/tmp/neo-brd-{slug}.md \
+  --root=.
+```
 
-slug = "{slug}"
-spec_dir = ".ai-agents/docs/SPEC"
-spec_path = f"{spec_dir}/{slug}-spec.md"
-
-os.makedirs(spec_dir, exist_ok=True)
-
-ba_section = """## BA — Business Requirements
-
-{BRD_MARKDOWN}
+**Expected output:**
+```
+BRD saved: .ai-agents/docs/BA/YYYY-MM-DD-{slug}.md
+```
 
 ---
-"""
 
-if os.path.exists(spec_path):
-    with open(spec_path, "r", encoding="utf-8") as f:
-        existing = f.read()
-    if "## BA — Business Requirements" in existing:
-        print(f"BA section already exists in spec. Skipping append.")
-    else:
-        with open(spec_path, "a", encoding="utf-8") as f:
-            f.write("\n" + ba_section)
-        print(f"BA section appended to: {spec_path}")
-else:
-    header = f"# Spec: {slug}\n\n"
-    with open(spec_path, "w", encoding="utf-8") as f:
-        f.write(header + ba_section)
-    print(f"Spec created: {spec_path}")
+### Step 5b — Write or append SPEC section
+
+```bash
+node packages/core/dist/cli.js write-spec \
+  --slug="{slug}" \
+  --content=/tmp/neo-brd-{slug}.md \
+  --root=.
 ```
 
-### Script 3 — Update tasks.json
+**Expected output (one of):**
+```
+Spec created: .ai-agents/docs/SPEC/{slug}-spec.md
+Spec appended: .ai-agents/docs/SPEC/{slug}-spec.md
+BA section already exists. Skipped.
+```
 
-```python
-import json, os, datetime
+---
 
-slug = "{slug}"
-feature_title = "{feature_name}"
-date_str = datetime.date.today().strftime("%Y-%m-%d")
-task_id = f"{slug}-{datetime.date.today().strftime('%Y%m%d')}"
-tasks_path = ".ai-agents/tasks.json"
-brd_path = f".ai-agents/docs/BA/{date_str}-{slug}.md"
-spec_path = f".ai-agents/docs/SPEC/{slug}-spec.md"
+### Step 5c — Update tasks.json
 
-# Load or init tasks.json
-if os.path.exists(tasks_path):
-    with open(tasks_path, "r", encoding="utf-8") as f:
-        data = json.load(f)
-else:
-    data = {"tasks": []}
+```bash
+node packages/core/dist/cli.js update-tasks \
+  --slug="{slug}" \
+  --title="{feature_name}" \
+  --root=.
+```
 
-# Check for duplicate task ID
-existing_ids = [t["id"] for t in data["tasks"]]
-if task_id in existing_ids:
-    print(f"Task {task_id} already exists. Skipping duplicate.")
-else:
-    new_task = {
-        "id": task_id,
-        "title": feature_title,
-        "status": "⏳ in progress",
-        "column": "In Progress",
-        "created_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
-        "updated_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
-        "steps": {
-            "ba": "✅ done",
-            "sa": "🔲 not started",
-            "ds": "🔲 not started",
-            "dev": "🔲 not started"
-        },
-        "docs": {
-            "ba_doc": brd_path,
-            "spec_doc": spec_path
-        }
-    }
-    data["tasks"].append(new_task)
+**Expected output (one of):**
+```
+Task added: {slug}-{YYYYMMDD}
+Task {slug}-{YYYYMMDD} already exists. Skipped.
+```
 
-    with open(tasks_path, "w", encoding="utf-8") as f:
-        json.dump(data, f, indent=2, ensure_ascii=False)
+---
 
-    print(f"Task added: {task_id}")
+### Step 5d — Clean up temp file
+
+```bash
+rm /tmp/neo-brd-{slug}.md
 ```
 
 ---
@@ -276,11 +238,14 @@ Next: /neo:sa — get the technical blueprint.
 | Situation | Action |
 |---|---|
 | `config.json` missing | Stop. Tell user to run `/neo:setup` |
-| Duplicate task ID found | Skip tasks.json write. Notify user. Continue with file saves. |
-| Spec file has existing BA section | Skip append. Notify user. Do not overwrite. |
-| Python3 not available | Stop. Tell user: "Python3 is required. Install from https://python.org/downloads" |
-| Docs folder missing | Re-create silently via `os.makedirs(..., exist_ok=True)` |
+| `packages/core/dist/cli.js` missing | Run `cd packages/core && npm run build`, then retry |
+| `write-brd` exits with code 1 | Stop. Show CLI error output. Do not continue. |
+| `write-spec` exits with code 1 | Stop. Show CLI error output. Do not continue. |
+| `update-tasks` exits with code 1 | Stop. Show CLI error output. Do not continue. |
+| Duplicate task ID | CLI prints skip message — not an error. Continue. |
+| BA section already in spec | CLI prints skip message — not an error. Continue. |
+| Docs folder missing | Core creates it automatically via `fs.mkdirSync(..., { recursive: true })` |
 
 ---
 
-*BA Agent v1.2 — Neo Agents AI*
+*BA Agent v1.3 — Neo Agents AI*

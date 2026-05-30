@@ -1,0 +1,13 @@
+{
+  "project_name": "neo-agents-ai",
+  "project_type": "Node.js",
+  "language": "TypeScript",
+  "package_manager": "pnpm",
+  "project_root": "S:\\Development\\Dev Projects\\Neo Agents AI",
+  "docs_path": ".ai-agents/docs",
+  "tasks_file": ".ai-agents/tasks.json",
+  "dashboard_port": 7842,
+  "access_token": "p5p6RiQG4bac9nuRnOQrZGC6zX92WUBi",
+  "neo_agents_version": "1.4.0",
+  "created_at": "2026-05-30T09:09:06.872Z"
+}
