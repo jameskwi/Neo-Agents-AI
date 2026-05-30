@@ -27,6 +27,7 @@ const AGENTS_DIR   = path.join(PROJECT_ROOT, ".ai-agents");
 const DOCS_DIR     = path.join(AGENTS_DIR, "docs");
 const TASKS_FILE   = path.join(AGENTS_DIR, "tasks.json");
 const CONFIG_FILE  = path.join(AGENTS_DIR, "config.json");
+const PID_FILE     = path.join(AGENTS_DIR, "dashboard.pid");
 const DASHBOARD    = path.join(__dirname, "dist", "index.html");
 const DIST_DIR     = path.join(__dirname, "dist");
 
@@ -328,6 +329,7 @@ server.listen(PORT, "127.0.0.1", () => {
     console.log(`\n   ⚠️  No access token found. Run /neo:setup to enable token protection.`);
   }
   console.log(`\nPress Ctrl+C to stop.\n`);
+  try { fs.writeFileSync(PID_FILE, String(process.pid), 'utf8'); } catch {}
 });
 
 server.on("error", (e) => {
@@ -339,6 +341,12 @@ server.on("error", (e) => {
   process.exit(1);
 });
 
-process.on('SIGINT',  () => { server.close(); process.exit(0); });
-process.on('SIGTERM', () => { server.close(); process.exit(0); });
-process.on('SIGHUP',  () => { server.close(); process.exit(0); });
+function shutdown() {
+  try { fs.unlinkSync(PID_FILE); } catch {}
+  server.close(() => process.exit(0));
+  setTimeout(() => process.exit(0), 1000);
+}
+process.on('SIGINT',  shutdown);
+process.on('SIGTERM', shutdown);
+process.on('SIGHUP',  shutdown);
+process.on('exit',    () => { try { fs.unlinkSync(PID_FILE); } catch {} });
