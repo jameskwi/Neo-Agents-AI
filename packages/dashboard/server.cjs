@@ -141,10 +141,10 @@ const routes = {
     const total = tasks.length;
 
     const PHASE_DEFS = [
-      { num: "1", label: "Build v1",  column: "Backlog"     },
-      { num: "2", label: "Test",      column: "In Progress" },
-      { num: "3", label: "v2 Agents", column: "Review"      },
-      { num: "4", label: "Scale",     column: "Done"        },
+      { num: "1", label: "Backlog",  column: "Backlog"     },
+      { num: "2", label: "In Progress",      column: "In Progress" },
+      { num: "3", label: "Review", column: "Review"      },
+      { num: "4", label: "Done",     column: "Done"        },
     ];
 
     const colCounts = {};
@@ -338,3 +338,7 @@ server.on("error", (e) => {
   }
   process.exit(1);
 });
+
+process.on('SIGINT',  () => { server.close(); process.exit(0); });
+process.on('SIGTERM', () => { server.close(); process.exit(0); });
+process.on('SIGHUP',  () => { server.close(); process.exit(0); });
