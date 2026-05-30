@@ -6,7 +6,7 @@
   },
   "plugins": [
     {
-      "name": "neo",
+      "name": "neo-agents-ai",
       "source": "./neo-agents-ai-plugin",
       "id": "neo-agents-ai",
       "displayName": "Neo Agents AI",
