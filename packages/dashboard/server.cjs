@@ -247,6 +247,17 @@ const routes = {
     });
   },
 
+  // POST /api/shutdown
+  "/api/shutdown": (req, res, query) => {
+    if (req.method !== "POST") return send(res, 405, { error: "Method not allowed" });
+    if (!checkToken(query, res)) return;
+    send(res, 200, { ok: true, message: "Shutting down" });
+    setTimeout(() => {
+      try { fs.unlinkSync(PID_FILE); } catch {}
+      process.exit(0);
+    }, 200);
+  },
+
   // POST /api/task/move  { id, column, token }
   "/api/task/move": (req, res, query) => {
     if (!checkToken(query, res)) return;
