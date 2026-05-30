@@ -6,8 +6,10 @@
   },
   "plugins": [
     {
+      "name": "neo-agents-ai",
+      "source": "./neo-agents-ai-plugin",
       "id": "neo-agents-ai",
-      "name": "Neo Agents AI",
+      "displayName": "Neo Agents AI",
       "path": "neo-agents-ai-plugin",
       "version": "1.4.0",
       "description": "An AI crew embedded in your project — BA, SA, Designer, Engineer, and PM agents that interview you before producing output. Works on any project, any stack, any size.",
