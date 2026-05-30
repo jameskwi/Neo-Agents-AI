@@ -19,6 +19,7 @@ Thumbs.db
 # Build output
 dist/
 .cache/
+!packages/dashboard/dist/
 
 # Local env / secrets
 .env
