@@ -8,6 +8,7 @@
     {
       "id": "neo-agents-ai",
       "name": "Neo Agents AI",
+      "path": ".claude-plugin/plugin.json",
       "version": "1.4.0",
       "description": "An AI crew embedded in your project — BA, SA, Designer, Engineer, and PM agents that interview you before producing output. Works on any project, any stack, any size.",
       "tagline": "Your AI crew — BA, SA, Designer, Engineer, PM — inside any project.",
