@@ -145,22 +145,21 @@ All output is plain markdown — readable in any editor, committable to git.
 ```
 neo-agents-ai/
 ├── .claude-plugin/
-│   ├── plugin.json          ← plugin manifest
-│   └── marketplace.json     ← marketplace listing
+│   ├── plugin.json              ← plugin manifest
+│   └── marketplace.json         ← marketplace listing
 ├── packages/
-│   ├── core/                ← file I/O engine (Node.js/TypeScript)
+│   ├── core/                    ← file I/O engine (Node.js)
 │   │   ├── src/
 │   │   │   ├── write-brd.ts
 │   │   │   ├── write-spec.ts
 │   │   │   ├── update-tasks.ts
 │   │   │   ├── write-config.ts
 │   │   │   ├── detect-stack.ts
-│   │   │   └── cli.ts       ← entry point
-│   │   └── dist/            ← compiled output (cli.js)
+│   │   │   └── cli.ts
+│   │   └── dist/cli.js          ← compiled entry point
 │   └── dashboard/
-│       ├── src/             ← React dashboard UI (Vite + TypeScript)
-│       ├── index.html
-│       └── server.cjs       ← local Node.js server
+│       ├── dist/index.html      ← single-file dashboard UI (no build step)
+│       └── server.cjs           ← local Node.js server
 ├── agents/
 │   ├── business-analyst.md
 │   ├── solution-architect.md
@@ -168,13 +167,13 @@ neo-agents-ai/
 │   ├── engineer.md
 │   └── planner.md
 ├── skills/
-│   ├── setup.md             ← /neo:setup
-│   ├── ba.md                ← /neo:ba
-│   ├── sa.md                ← /neo:sa
-│   ├── ds.md                ← /neo:ds
-│   ├── dev.md               ← /neo:dev
-│   └── dashboard.md         ← /neo:dashboard
-├── CLAUDE.md                ← global rules for all agents
+│   ├── setup.md                 ← /neo:setup
+│   ├── ba.md                    ← /neo:ba
+│   ├── sa.md                    ← /neo:sa (v2)
+│   ├── ds.md                    ← /neo:ds (v2)
+│   ├── dev.md                   ← /neo:dev (v2)
+│   └── dashboard.md             ← /neo:dashboard
+├── CLAUDE.md
 └── README.md
 ```
 
@@ -234,6 +233,20 @@ Yes. You'll be prompted: `Config exists. Update? [y/n]` — existing config is b
 
 ## Changelog
 
+### v1.5.1 — May 2026 *(current — v1 shipped)*
+- UAT passed — all v1 acceptance criteria met
+- Stop Server button with confirmation popover in dashboard header
+- PID file management — stale server detection + auto-kill on restart
+- `POST /api/shutdown` endpoint in `server.cjs`
+- `skills/dashboard.md` v1.5 — detached background process, PID-based lifecycle
+
+### v1.5.0 — May 2026
+- Dashboard rebuilt as single-file `packages/dashboard/dist/index.html`
+- No build step — works fully offline on localhost
+- All 5 tabs wired to live API: Overview, Board, Docs, Timeline, Task Detail modal
+- `/api/timeline` and `/api/task/create` endpoints added to `server.cjs`
+- Confirmed matching Claude Design preview files
+
 ### v1.4.0 — May 2026
 - `agents/business-analyst.md` v1.3: replaced inline Python scripts with `packages/core` CLI calls (`write-brd`, `write-spec`, `update-tasks`)
 - `skills/ba.md` v1.3: pre-flight now checks for `packages/core/dist/cli.js`, passes `CORE_CLI` to agent
@@ -272,4 +285,4 @@ MIT — [jameskwi](https://github.com/jameskwi)
 
 ---
 
-*Neo Agents AI — v1.4.0 | [GitHub](https://github.com/jameskwi/Neo-Agents-AI)*
+*Neo Agents AI — v1.5.1 | [GitHub](https://github.com/jameskwi/Neo-Agents-AI)*
