@@ -5,12 +5,31 @@ Initializes Neo Agents AI in the current project. Auto-detects stack, creates co
 
 ---
 
-## Pre-flight Check
+## Resolve Plugin Path
 
-Before any other step, verify `packages/core` is built:
+Before any other step, resolve the plugin install location and set `CLI`:
 
 ```bash
-[ -f packages/core/dist/cli.js ] || (cd packages/core && npm run build)
+PLUGIN_DIR="${CLAUDE_PLUGIN_DIR:-}"
+if [ -z "$PLUGIN_DIR" ]; then
+  PLUGIN_DIR=$(find "$HOME/.claude" -maxdepth 8 -name "cli.js" \
+    -path "*/neo-agents-ai*/packages/core/dist/cli.js" 2>/dev/null \
+    | head -1 | sed 's|/packages/core/dist/cli.js||')
+fi
+CLI="${PLUGIN_DIR}/packages/core/dist/cli.js"
+```
+
+If `PLUGIN_DIR` is still empty after this → stop:
+> "Cannot locate the Neo Agents AI plugin install path. Reinstall the plugin."
+
+---
+
+## Pre-flight Check
+
+Verify `packages/core` is built:
+
+```bash
+[ -f "$CLI" ] || (cd "${PLUGIN_DIR}/packages/core" && npm run build)
 ```
 
 If the build fails → stop and show the npm error output.
@@ -42,7 +61,7 @@ If the build fails → stop and show the npm error output.
 ### 2. Auto-detect project stack + metadata
 
 ```bash
-node packages/core/dist/cli.js detect-stack --root=.
+node "$CLI" detect-stack --root=.
 ```
 
 Parse the JSON output. Field mapping:
@@ -74,7 +93,7 @@ Is this correct? [y/n]
 ### 3. Write config
 
 ```bash
-node packages/core/dist/cli.js write-config \
+node "$CLI" write-config \
   --root=. \
   --name="{project_name}" \
   --type="{framework}" \
@@ -146,7 +165,8 @@ Next step: /neo:ba "describe your first feature"
 
 | Error | Message |
 |---|---|
-| `packages/core/dist/cli.js` missing | Run `cd packages/core && npm run build`. Stop if build fails. |
+| Plugin path not found | "Cannot locate Neo Agents AI plugin. Reinstall the plugin." |
+| `cli.js` missing after build | Run `cd "${PLUGIN_DIR}/packages/core" && npm run build`. Stop if build fails. |
 | `write-config` exits code 1 | Show CLI error output. Stop. |
 | Permission denied | "Cannot write to project directory. Check folder permissions." |
 | Disk full | "Not enough disk space. Free up space and retry." |
@@ -154,4 +174,4 @@ Next step: /neo:ba "describe your first feature"
 
 ---
 
-*setup skill v1.4 — Neo Agents AI*
+*setup skill v1.5 — Neo Agents AI*

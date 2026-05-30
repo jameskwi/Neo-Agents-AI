@@ -10,6 +10,25 @@ Activates the Business Analyst agent. The BA interviews you with targeted questi
 
 ---
 
+## Resolve Plugin Path
+
+Before any other step, resolve the plugin install location and set `CLI`:
+
+```bash
+PLUGIN_DIR="${CLAUDE_PLUGIN_DIR:-}"
+if [ -z "$PLUGIN_DIR" ]; then
+  PLUGIN_DIR=$(find "$HOME/.claude" -maxdepth 8 -name "cli.js" \
+    -path "*/neo-agents-ai*/packages/core/dist/cli.js" 2>/dev/null \
+    | head -1 | sed 's|/packages/core/dist/cli.js||')
+fi
+CLI="${PLUGIN_DIR}/packages/core/dist/cli.js"
+```
+
+If `PLUGIN_DIR` is still empty → stop:
+> "Cannot locate the Neo Agents AI plugin install path. Reinstall the plugin."
+
+---
+
 ## Pre-flight Checks
 
 Before anything else:
@@ -20,10 +39,10 @@ Before anything else:
      > "Neo Agents is not set up. Run `/neo:setup` first."
 
 2. **Check core is built**
-   - Look for `packages/core/dist/cli.js`
+   - Check for `$CLI`
    - If missing → run:
      ```bash
-     cd packages/core && npm run build
+     cd "${PLUGIN_DIR}/packages/core" && npm run build
      ```
    - If build fails → stop and show error output
 
@@ -49,7 +68,7 @@ PROJECT_TYPE: {from config}
 LANGUAGE: {from config}
 ACTIVE_TASKS: {from tasks.json}
 EXISTING_SPEC: {path if found, null if not}
-CORE_CLI: packages/core/dist/cli.js
+CORE_CLI: {value of $CLI}
 ```
 
 The BA agent takes over from here and runs the full interview → BRD → file save flow.
@@ -58,7 +77,7 @@ The BA agent takes over from here and runs the full interview → BRD → file s
 
 ## On Completion
 
-The BA agent saves files via `packages/core/dist/cli.js`:
+The BA agent saves files via `$CLI`:
 1. BRD → `.ai-agents/docs/BA/`
 2. SPEC section → `.ai-agents/docs/SPEC/`
 3. Task entry → `.ai-agents/tasks.json`
@@ -77,4 +96,4 @@ Next: /neo:sa to get the technical blueprint.
 
 ---
 
-*ba skill v1.3 — Neo Agents AI*
+*ba skill v1.4 — Neo Agents AI*
