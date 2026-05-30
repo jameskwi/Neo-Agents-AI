@@ -11,7 +11,7 @@
       "id": "neo-agents-ai",
       "displayName": "Neo Agents AI",
       "path": "neo-agents-ai-plugin",
-      "version": "1.5.0",
+      "version": "1.5.1",
       "description": "An AI crew embedded in your project — BA, SA, Designer, Engineer, and PM agents that interview you before producing output. Works on any project, any stack, any size.",
       "tagline": "Your AI crew — BA, SA, Designer, Engineer, PM — inside any project.",
       "category": "productivity",
